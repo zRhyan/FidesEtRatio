@@ -47,9 +47,10 @@ export default function AdminPanel({
   const [editingQuizData, setEditingQuizData] = useState(null);
 
   // Estados de Configuração
-  const [currentPin, setCurrentPin] = useState(getAdminPin());
+  const [currentPin, setCurrentPin] = useState('...');
   const [newPin, setNewPin] = useState('');
   const [pinSuccessMsg, setPinSuccessMsg] = useState(false);
+  const [pinUpdating, setPinUpdating] = useState(false);
 
   // Estados de Supabase
   const [supabaseUrl, setSupabaseUrl] = useState('');
@@ -58,10 +59,16 @@ export default function AdminPanel({
 
   useEffect(() => {
     loadAttempts();
+    loadPin();
     const cfg = getSupabaseConfig();
     setSupabaseUrl(cfg.url || '');
     setSupabaseKey(cfg.anonKey || '');
   }, []);
+
+  const loadPin = async () => {
+    const pin = await getAdminPin();
+    setCurrentPin(pin);
+  };
 
   const loadAttempts = async () => {
     const data = await getAllAttemptsSummary();
@@ -160,15 +167,23 @@ export default function AdminPanel({
     }
   };
 
-  // Atualizar PIN
-  const handleUpdatePin = (e) => {
+  // Atualizar PIN (Nuvem + Local)
+  const handleUpdatePin = async (e) => {
     e.preventDefault();
-    if (newPin.trim()) {
-      setAdminPin(newPin.trim());
-      setCurrentPin(newPin.trim());
+    if (!newPin.trim() || pinUpdating) return;
+
+    setPinUpdating(true);
+    try {
+      const trimmed = newPin.trim();
+      await setAdminPin(trimmed);
+      setCurrentPin(trimmed);
       setNewPin('');
       setPinSuccessMsg(true);
       setTimeout(() => setPinSuccessMsg(false), 3000);
+    } catch (err) {
+      console.error('Erro ao atualizar PIN:', err);
+    } finally {
+      setPinUpdating(false);
     }
   };
 
@@ -820,7 +835,17 @@ CREATE TABLE IF NOT EXISTS attempts (
 );
 
 ALTER TABLE attempts ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public Read/Write" ON attempts FOR ALL USING (true) WITH CHECK (true);`}
+CREATE POLICY "Public Read/Write Attempts" ON attempts FOR ALL USING (true) WITH CHECK (true);
+
+-- Tabela para guardar configurações globais (PIN mestre sincronizado):
+CREATE TABLE IF NOT EXISTS fides_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE fides_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public Read/Write Settings" ON fides_settings FOR ALL USING (true) WITH CHECK (true);`}
               </pre>
             </div>
           </div>
@@ -830,12 +855,12 @@ CREATE POLICY "Public Read/Write" ON attempts FOR ALL USING (true) WITH CHECK (t
             <div className="flex items-center gap-2 text-[#c5a059]">
               <Key size={20} />
               <h3 className="medieval-title text-base sm:text-lg font-bold">
-                Segurança & PIN do Administrador
+                Segurança & PIN do Administrador (Sincronizado na Nuvem)
               </h3>
             </div>
 
             <p className="text-xs text-[#a3947c]">
-              O PIN atual é: <code className="text-[#c5a059] font-mono font-bold">{currentPin}</code>. Altere-o se desejar uma nova senha mestre.
+              O PIN atual é: <code className="text-[#c5a059] font-mono font-bold">{currentPin}</code>. Ao alterar aqui, a nova senha é propagada na nuvem para qualquer aparelho ou navegador.
             </p>
 
             <form onSubmit={handleUpdatePin} className="flex gap-2">
@@ -844,13 +869,14 @@ CREATE POLICY "Public Read/Write" ON attempts FOR ALL USING (true) WITH CHECK (t
                 value={newPin}
                 onChange={(e) => setNewPin(e.target.value)}
                 placeholder="Novo PIN (ex: veritas)"
-                className="flex-1 bg-[#1b1712] border border-[#3d2f1e] rounded-lg px-3 py-2 text-xs sm:text-sm text-[#f4eedb] outline-none"
+                className="flex-1 bg-[#1b1712] border border-[#3d2f1e] rounded-lg px-3 py-2 text-xs sm:text-sm text-[#f4eedb] outline-none font-mono"
               />
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-[#382b1c] hover:bg-[#4d3a24] text-[#ffd983] border border-[#6b502e] text-xs font-semibold uppercase tracking-wider transition-colors"
+                disabled={pinUpdating}
+                className={`px-4 py-2 rounded-lg bg-[#382b1c] text-[#ffd983] border border-[#6b502e] text-xs font-semibold uppercase tracking-wider transition-colors ${pinUpdating ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#4d3a24]'}`}
               >
-                Alterar PIN
+                {pinUpdating ? 'Salvando...' : 'Alterar PIN'}
               </button>
             </form>
 

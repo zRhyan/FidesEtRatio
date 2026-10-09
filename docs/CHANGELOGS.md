@@ -93,17 +93,25 @@
 - [x] **Distribuição Aleatória das Alternativas Corretas:** As respostas certas foram redistribuídas de forma equilibrada entre as posições A, B, C e D (eliminando o padrão onde a primeira opção era sempre a correta).
 - [x] **Sincronização Automática por Versão (`v2.0.0-alta-dificuldade`):** A camada de persistência agora compara o campo `version` do quiz para substituir imediatamente o cache do navegador sem necessidade de limpeza manual.
 
+### 1.9 Sincronização em Nuvem do PIN Mestre do Administrador (`v0.6.0`)
+- [x] **Persistência Global de Configurações no Supabase:**
+  - Criação da tabela `fides_settings` para armazenar parâmetros globais compartilhados (incluindo `admin_pin`).
+  - As funções `getAdminPin()`, `setAdminPin()` e `verifyAdminPin()` em `src/services/storage.js` foram tornadas assíncronas, consultando o Supabase com fallback transparente para o `localStorage`.
+  - Quando o catequista atualiza o PIN no painel de administração em um navegador, a nova senha é propagada instantaneamente para todos os dispositivos, abas anônimas e celulares.
+  - Interface do modal de login (`AdminLoginModal.jsx`) e do painel (`AdminPanel.jsx`) atualizadas com feedback de carregamento (*"Verificando..."* / *"Salvando..."*).
+
 ---
 
 ## 2. O Que Resta Implementar (Pendências & Roadmap)
 
 | Item | Descrição | Status | Dependência |
 | :--- | :--- | :---: | :--- |
-| **1. Conexão do Projeto Supabase (Opcional)** | Criar o projeto gratuito no Supabase, rodar o script SQL fornecido no painel e salvar a URL e Anon Key nas configurações. | ⏳ Pronto para config | Usuário criar projeto no dashboard supabase.com se desejar sincronização em nuvem |
-| **2. Repositório Git Local** | Inicialização do branch `main`, configuração de `.gitignore` e commit inicial com todo o código e assets. | ✅ Concluído | Commit inicial criado (`32f183e`) |
-| **3. Push para o GitHub & Deploy no Netlify** | Adicionar remote (`git remote add origin <url>`), fazer o push (`git push -u origin main`) e conectar ao Netlify para publicação. | ⏳ Aguardando push do usuário | Usuário executar o push com suas credenciais SSH |
+| **1. Conexão do Projeto Supabase** | Projeto criado em São Paulo, tabela `attempts` e `fides_settings` configuradas. | ✅ Concluído | Conectado via Netlify Env Vars |
+| **2. Repositório Git Local** | Inicialização do branch `main`, configuração de `.gitignore` e commit inicial com todo o código e assets. | ✅ Concluído | Branch `main` |
+| **3. Push para o GitHub** | Repositório remoto `zRhyan/FidesEtRatio` conectado e sincronizado. | ✅ Concluído | [github.com/zRhyan/FidesEtRatio](https://github.com/zRhyan/FidesEtRatio) |
+| **4. Deploy no Netlify** | Aplicação publicada e acessível online publicamente via Netlify. | ✅ Concluído | Site no ar com build automatizado |
 
 ---
 
 ## 3. Próxima Etapa
-> **Repositório Git inicializado e commitado.** Resta apenas o `git push` com seu SSH para o GitHub e a vinculação no Netlify.
+> **Sistema 100% Completo e Integrado!** Aplicação no ar, persistência híbrida ativa no Supabase e segurança com sincronização global em tempo real.

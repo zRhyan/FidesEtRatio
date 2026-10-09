@@ -5,17 +5,28 @@ import { verifyAdminPin } from '../services/storage';
 export default function AdminLoginModal({ isOpen, onClose, onSuccess }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (verifyAdminPin(pin)) {
-      setError(false);
-      setPin('');
-      onSuccess();
-    } else {
+    if (!pin.trim() || loading) return;
+
+    setLoading(true);
+    try {
+      const isValid = await verifyAdminPin(pin);
+      if (isValid) {
+        setError(false);
+        setPin('');
+        onSuccess();
+      } else {
+        setError(true);
+      }
+    } catch (err) {
       setError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,10 +79,11 @@ export default function AdminLoginModal({ isOpen, onClose, onSuccess }) {
 
           <button
             type="submit"
-            className="w-full py-2.5 px-4 rounded-lg bg-gradient-to-r from-[#9b7834] via-[#c5a059] to-[#9b7834] hover:brightness-110 text-[#0d0c0a] font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
+            disabled={loading}
+            className={`w-full py-2.5 px-4 rounded-lg bg-gradient-to-r from-[#9b7834] via-[#c5a059] to-[#9b7834] text-[#0d0c0a] font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 ${loading ? 'opacity-60 cursor-not-allowed' : 'hover:brightness-110'}`}
           >
             <KeyRound size={15} />
-            <span>Acessar Painel</span>
+            <span>{loading ? 'Verificando...' : 'Acessar Painel'}</span>
           </button>
         </form>
       </div>

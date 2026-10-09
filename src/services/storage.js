@@ -84,24 +84,55 @@ export function clearCurrentUser() {
 }
 
 /* =========================================================
-   GESTÃO DO PIN DE ADMINISTRADOR
+   GESTÃO DO PIN DE ADMINISTRADOR (NUVEM + LOCAL)
 ========================================================= */
 
-export function getAdminPin() {
+export async function getAdminPin() {
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('fides_settings')
+        .select('value')
+        .eq('key', 'admin_pin')
+        .maybeSingle();
+
+      if (!error && data && data.value) {
+        localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, data.value);
+        return data.value;
+      }
+    } catch (err) {
+      console.warn('Erro ao buscar PIN no Supabase:', err);
+    }
+  }
+
   return localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || DEFAULT_PIN;
 }
 
-export function setAdminPin(newPin) {
+export async function setAdminPin(newPin) {
   const pin = (newPin || '').trim();
-  if (pin) {
-    localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, pin);
-    return true;
+  if (!pin) return false;
+
+  localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, pin);
+
+  if (supabaseClient) {
+    try {
+      await supabaseClient
+        .from('fides_settings')
+        .upsert({
+          key: 'admin_pin',
+          value: pin,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'key' });
+    } catch (err) {
+      console.warn('Erro ao salvar PIN no Supabase:', err);
+    }
   }
-  return false;
+
+  return true;
 }
 
-export function verifyAdminPin(candidatePin) {
-  const currentPin = getAdminPin();
+export async function verifyAdminPin(candidatePin) {
+  const currentPin = await getAdminPin();
   return (candidatePin || '').trim().toLowerCase() === currentPin.toLowerCase();
 }
 
