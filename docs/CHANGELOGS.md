@@ -114,10 +114,23 @@
 
 ---
 
-## 3. Conclusão do Projeto
+## 3. Conclusão da Entrega Central
 > 🏆 **Sistema 100% Completo, Integrado e Operacional!**
 > 
 > * **Interface:** Estética sacra medieval imersiva, responsiva e mobile-first.
 > * **Pedagogia:** 30 questões de alta dificuldade calibradas com explicações doutrinárias profundas para acertos e distratores.
 > * **Nuvem & Persistência:** PostgreSQL no Supabase com fallback offline, painel do catequista em tempo real e sincronização global de PIN.
 > * **Pronto para uso** na formação e nos encontros de catequese!
+
+---
+
+## 4. Ciclo de Refinamento Final Pré-Lançamento (Em Andamento)
+> Consulte o documento normativo: [`docs/plano_fases_usabilidade_estetica.md`](./plano_fases_usabilidade_estetica.md)
+
+1. **Fase 1: Melhorias de Usabilidade (UX/Mobile):** 🟡 **Em Planejamento e Varredura Ativa**
+   - Varredura de experiência em smartphones.
+   - Formatação estruturada de silogismos e passagens lógicas (quebra de linha e legibilidade).
+   - Ergonomia touch (zonas de toque e prevenção de cliques involuntários).
+   - Responsividade em telas estreitas (< 380px) e fluidez de navegação.
+2. **Fase 2: Melhorias de Estética (UI Sacra Medieval):** ⏳ **Aguardando Conclusão da Fase 1**
+   - Polimento visual sacro, micro-interações litúrgicas, contrastes nobres e refinamento do certificado iluminado.
