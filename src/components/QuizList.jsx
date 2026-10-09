@@ -4,6 +4,7 @@ import { getUserRecordForQuiz } from '../services/storage';
 
 export default function QuizList({ 
   quizzes = [], 
+  isLoading = false,
   currentUser, 
   onSelectQuiz, 
   onOpenUserModal,
@@ -77,7 +78,7 @@ export default function QuizList({
         {!currentUser && (
           <button
             onClick={onOpenUserModal}
-            className="px-4 py-2 rounded-lg bg-[#c5a059] hover:bg-[#d6b46e] text-[#0d0c0a] font-bold text-xs uppercase tracking-wider transition-all whitespace-nowrap shadow-md"
+            className="w-full sm:w-auto px-5 py-3 min-h-[48px] rounded-lg bg-[#c5a059] hover:bg-[#d6b46e] text-[#0d0c0a] font-bold text-xs uppercase tracking-wider transition-all whitespace-nowrap shadow-md"
           >
             Identificar-se Agora
           </button>
@@ -92,11 +93,22 @@ export default function QuizList({
             Módulos de Formação & Quizzes
           </h2>
           <span className="text-xs text-[#8c7e68]">
-            {quizzes.length} módulo{quizzes.length > 1 ? 's' : ''} disponível{quizzes.length > 1 ? 'is' : ''}
+            {isLoading
+              ? 'Carregando...'
+              : `${quizzes.length} módulo${quizzes.length > 1 ? 's' : ''} disponível${quizzes.length > 1 ? 'is' : ''}`}
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {isLoading && quizzes.length === 0 && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="md:col-span-2 parchment-card rounded-xl p-8 text-center text-sm text-[#b5a990] animate-pulse"
+            >
+              📜 Carregando os módulos de formação...
+            </div>
+          )}
           {quizzes.map((quiz) => {
             const userRecord = currentUser ? getUserRecordForQuiz(currentUser, quiz.id) : null;
             const hasCompleted100 = userRecord?.completed100 || userRecord?.highestScore === 100;
@@ -145,7 +157,7 @@ export default function QuizList({
                     {quiz.description}
                   </p>
 
-                  <div className="flex items-center gap-4 text-xs text-[#8c7d66] mt-4 pt-3 border-t border-[#292218]">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-[#8c7d66] mt-4 pt-3 border-t border-[#292218]">
                     <span>
                       📜 {quiz.questions?.length || 0} questões
                     </span>
@@ -170,7 +182,7 @@ export default function QuizList({
                         onSelectQuiz(quiz);
                       }
                     }}
-                    className={`flex-1 py-2.5 px-4 rounded-lg font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md ${
+                    className={`flex-1 min-w-[10rem] py-3 min-h-[48px] px-4 rounded-lg font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md ${
                       hasCompleted100
                         ? "bg-[#292218] hover:bg-[#382d1f] text-[#e6cb8e] border border-[#5c472d]"
                         : "bg-gradient-to-r from-[#9b7834] to-[#c5a059] hover:brightness-110 text-[#0d0c0a]"
@@ -189,11 +201,11 @@ export default function QuizList({
                   {hasCompleted100 && (
                     <button
                       onClick={() => onOpenCertificate({ quiz, record: userRecord, username: currentUser })}
-                      className="py-2.5 px-3 rounded-lg bg-[#3a2c1a] hover:bg-[#4d3a24] text-[#ffd983] border border-[#7a5d34] text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                      className="py-3 min-h-[48px] px-4 rounded-lg bg-[#3a2c1a] hover:bg-[#4d3a24] text-[#ffd983] border border-[#7a5d34] text-xs font-semibold flex items-center gap-1.5 transition-colors"
                       title="Ver Certificado de Aprovação"
                     >
                       <Award size={15} />
-                      <span className="hidden sm:inline">Certificado</span>
+                      <span>Certificado</span>
                     </button>
                   )}
                 </div>

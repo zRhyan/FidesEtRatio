@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import FormattedText from './FormattedText';
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -20,6 +21,32 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
   const currentQuestion = questions[currentQuestionIndex];
   const totalQuestions = questions.length;
   const progressPercent = Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100);
+  const feedbackRef = useRef(null);
+
+  // Ao entrar no quiz, garante que a tela comece no topo
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  // Rolagem suave até a explicação assim que a resposta é registrada
+  useEffect(() => {
+    if (!isAnswerConfirmed) return undefined;
+    const timer = setTimeout(() => {
+      feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [isAnswerConfirmed]);
+
+  // Evita perder o progresso por um toque acidental em "Abandonar"
+  const handleExit = () => {
+    if (
+      userAnswers.length > 0 &&
+      !window.confirm('Deseja abandonar o quiz? O progresso desta tentativa será perdido.')
+    ) {
+      return;
+    }
+    onExit();
+  };
 
   // Selecionar uma alternativa
   const handleSelectOption = (optionId) => {
@@ -84,14 +111,14 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
       <div className="bg-[#14120e] border border-[#3d2f1e] rounded-xl p-4 sm:p-5 shadow-lg space-y-3">
         <div className="flex items-center justify-between gap-3">
           <button
-            onClick={onExit}
-            className="flex items-center gap-1.5 text-xs text-[#a3947c] hover:text-[#c5a059] transition-colors py-1 px-2 rounded-md hover:bg-[#201a13]"
+            onClick={handleExit}
+            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#a3947c] hover:text-[#c5a059] transition-colors min-h-[44px] px-2.5 -ml-2.5 rounded-md hover:bg-[#201a13]"
           >
             <ArrowLeft size={15} />
             <span>Abandonar Quiz</span>
           </button>
 
-          <span className="text-xs font-semibold uppercase tracking-widest text-[#c5a059]">
+          <span className="hidden sm:block text-xs font-semibold uppercase tracking-widest text-[#c5a059] truncate">
             {quiz.title}
           </span>
 
@@ -101,7 +128,14 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-[#201a14] h-2 rounded-full overflow-hidden border border-[#3d2f1e]">
+        <div
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={progressPercent}
+          aria-label={`Progresso do quiz: questão ${currentQuestionIndex + 1} de ${totalQuestions}`}
+          className="w-full bg-[#201a14] h-2 rounded-full overflow-hidden border border-[#3d2f1e]"
+        >
           <div 
             className="h-full bg-gradient-to-r from-[#9b7834] via-[#c5a059] to-[#f4d48f] transition-all duration-500 ease-out"
             style={{ width: `${progressPercent}%` }}
@@ -117,8 +151,8 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
           <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#2a2015] border border-[#7a5d34] flex items-center justify-center text-xs font-bold text-[#c5a059] shrink-0 mt-0.5">
             {currentQuestionIndex + 1}
           </span>
-          <h2 className="medieval-title text-base sm:text-xl font-bold text-[#fbf8ee] leading-relaxed">
-            {currentQuestion.question}
+          <h2 className="flex-1 min-w-0">
+            <FormattedText text={currentQuestion.question} variant="question" />
           </h2>
         </div>
 
@@ -152,14 +186,14 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
                 key={option.id}
                 disabled={isAnswerConfirmed}
                 onClick={() => handleSelectOption(option.id)}
-                className={`w-full text-left p-3.5 sm:p-4 rounded-xl border transition-all duration-200 flex items-start gap-3.5 group relative ${buttonStyle} ${!isAnswerConfirmed ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}
+                className={`w-full text-left p-4 min-h-[56px] rounded-xl border transition-all duration-200 flex items-start gap-3.5 group relative ${buttonStyle} ${!isAnswerConfirmed ? 'cursor-pointer active:scale-[0.99]' : 'cursor-default'}`}
               >
                 <span className={`w-6 h-6 rounded-md border flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 transition-colors ${badgeStyle}`}>
                   {letter}
                 </span>
 
-                <span className="text-xs sm:text-sm sm:leading-relaxed font-normal flex-1">
-                  {option.text}
+                <span className="text-sm sm:text-base leading-relaxed font-normal flex-1 min-w-0">
+                  <FormattedText text={option.text} variant="option" />
                 </span>
 
                 {isAnswerConfirmed && (
@@ -178,7 +212,7 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
 
         {/* Pedagogical Explanation Box (Feedback Imediato US04) */}
         {isAnswerConfirmed && selectedOptionObj && (
-          <div className="mt-6 pt-5 border-t border-[#382b1b] animate-fadeIn">
+          <div ref={feedbackRef} className="mt-6 pt-5 border-t border-[#382b1b] animate-fadeIn scroll-mt-24">
             <div 
               className={`p-4 sm:p-5 rounded-xl border ${
                 selectedOptionObj.isCorrect 
@@ -201,7 +235,7 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
               </div>
 
               {/* Justificativa detalhada da alternativa marcada */}
-              <p className="text-xs sm:text-sm text-[#ece4d0] leading-relaxed">
+              <p className="text-sm sm:text-base text-[#ece4d0] leading-relaxed">
                 {selectedOptionObj.explanation || (
                   selectedOptionObj.isCorrect 
                     ? "Esta alternativa expressa com exatidão a doutrina ensinada."
@@ -211,22 +245,25 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
 
               {/* Se errou, mostra também a explicação da alternativa que era a certa */}
               {!selectedOptionObj.isCorrect && (
-                <div className="mt-3 pt-3 border-t border-[#852336]/40 text-xs sm:text-sm text-emerald-200/90">
+                <div className="mt-3 pt-3 border-t border-[#852336]/40 text-sm sm:text-base text-emerald-200/90">
                   <span className="font-semibold block text-emerald-300 mb-1">
                     💡 A alternativa correta era:
                   </span>
-                  <p className="italic text-[#d8cfbe]">
-                    "{currentQuestion.options.find(o => o.isCorrect)?.text}"
-                  </p>
+                  <div className="text-[#d8cfbe]">
+                    <FormattedText
+                      text={currentQuestion.options.find(o => o.isCorrect)?.text}
+                      variant="review"
+                    />
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Next Question / Finish Button */}
-            <div className="mt-5 flex justify-end">
+            <div className="mt-5 flex justify-end sticky bottom-3 z-10">
               <button
                 onClick={handleNext}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#9b7834] via-[#c5a059] to-[#9b7834] hover:brightness-110 text-[#0d0c0a] font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg flex items-center justify-center gap-2 active:scale-[0.98]"
+                className="w-full sm:w-auto px-6 py-3.5 min-h-[48px] rounded-xl bg-gradient-to-r from-[#9b7834] via-[#c5a059] to-[#9b7834] hover:brightness-110 text-[#0d0c0a] font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                 <span>
                   {currentQuestionIndex + 1 < totalQuestions 

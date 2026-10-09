@@ -125,12 +125,19 @@
 ---
 
 ## 4. Ciclo de Refinamento Final Pré-Lançamento (Em Andamento)
-> Consulte o documento normativo: [`docs/plano_fases_usabilidade_estetica.md`](./plano_fases_usabilidade_estetica.md)
+> Documento normativo: [`docs/plano_fases_usabilidade_estetica.md`](./plano_fases_usabilidade_estetica.md)  
+> Relatório da Fase 1: [`docs/relatorio_usabilidade_fase1.md`](./relatorio_usabilidade_fase1.md)
 
-1. **Fase 1: Melhorias de Usabilidade (UX/Mobile):** 🟡 **Em Planejamento e Varredura Ativa**
-   - Varredura de experiência em smartphones.
-   - Formatação estruturada de silogismos e passagens lógicas (quebra de linha e legibilidade).
-   - Ergonomia touch (zonas de toque e prevenção de cliques involuntários).
-   - Responsividade em telas estreitas (< 380px) e fluidez de navegação.
+1. **Fase 1: Melhorias de Usabilidade (UX/Mobile):** 🟡 **Implementada — aguardando validação manual e decisões do usuário**
+   - ✅ Silogismos e premissas formatados (selos P1/P2/C) em enunciados, alternativas, feedback e revisão (`FormattedText.jsx`).
+   - ✅ Editor do catequista com campos multilinha para criar novos silogismos.
+   - ✅ Fontes maiores no mobile, alvos de toque de 44–48 px e botão "Próxima Questão" fixo.
+   - ✅ Rolagem automática até o feedback e ao topo ao abrir quiz/resultado.
+   - ✅ Cabeçalho adaptado a telas de 320 px; logo navega para o início.
+   - ✅ Painel do catequista com cartões no celular e tabela corrigida.
+   - ✅ Impressão do certificado isolada (CSS `@media print`) e modal fechável por Esc/clique fora.
+   - ✅ Fim do zoom automático do iOS nos campos de texto; modais roláveis com teclado virtual.
+   - ✅ Estado de carregamento dos módulos; dicas do PIN padrão removidas da tela de login.
+   - 🔵 **Pendentes de decisão:** B5 (confirmar resposta), E3 (botão Voltar/progresso), E4 (histórico do aluno entre aparelhos), E5 (normalização de nomes).
 2. **Fase 2: Melhorias de Estética (UI Sacra Medieval):** ⏳ **Aguardando Conclusão da Fase 1**
    - Polimento visual sacro, micro-interações litúrgicas, contrastes nobres e refinamento do certificado iluminado.

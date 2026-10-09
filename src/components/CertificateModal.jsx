@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Printer, Award, Sparkles, ShieldCheck } from 'lucide-react';
 
 export default function CertificateModal({ isOpen, onClose, data }) {
+  // Fechar com a tecla Esc (teclado físico / desktop)
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !data) return null;
 
   const { quiz, record, username } = data;
@@ -22,25 +32,35 @@ export default function CertificateModal({ isOpen, onClose, data }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn overflow-y-auto">
-      <div className="max-w-2xl w-full my-auto space-y-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Certificado de Formação Catequética"
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn overflow-y-auto"
+    >
+      <div onClick={(e) => e.stopPropagation()} className="max-w-2xl w-full m-auto space-y-4">
         
         {/* Controls Bar (Not printed) */}
-        <div className="flex items-center justify-between print:hidden text-[#ded3be]">
+        <div className="flex flex-wrap items-center justify-between gap-2 print:hidden text-[#ded3be]">
           <span className="text-xs uppercase tracking-widest text-[#c5a059] font-bold flex items-center gap-1.5">
-            <Award size={16} /> Certificado de Formação Catequética
+            <Award size={16} />
+            <span className="hidden sm:inline">Certificado de Formação Catequética</span>
+            <span className="sm:hidden">Certificado</span>
           </span>
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="px-3.5 py-1.5 rounded-lg bg-[#c5a059] hover:bg-[#d6b46e] text-black font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors shadow-md"
+              className="px-4 min-h-[44px] rounded-lg bg-[#c5a059] hover:bg-[#d6b46e] text-black font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors shadow-md"
             >
               <Printer size={15} />
-              <span>Imprimir / Salvar PDF</span>
+              <span className="hidden sm:inline">Imprimir / Salvar PDF</span>
+              <span className="sm:hidden">Salvar PDF</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg bg-[#221c15] hover:bg-[#382b1c] text-[#ded3be] transition-colors"
+              aria-label="Fechar certificado"
+              className="w-11 h-11 flex items-center justify-center rounded-lg bg-[#221c15] hover:bg-[#382b1c] text-[#ded3be] transition-colors"
             >
               <X size={18} />
             </button>

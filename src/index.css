@@ -93,3 +93,50 @@ body {
   pointer-events: none;
   border-radius: inherit;
 }
+
+/* =========================================================
+   USABILIDADE MOBILE
+========================================================= */
+
+/* Evita o zoom automático do Safari/iOS ao focar campos com fonte < 16px */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Rolagem suave e sem toque azul fosco em dispositivos touch */
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
+   IMPRESSÃO DO CERTIFICADO (somente o certificado é impresso)
+========================================================= */
+@media print {
+  @page {
+    margin: 10mm;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  #printable-certificate,
+  #printable-certificate * {
+    visibility: visible !important;
+  }
+
+  #printable-certificate {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

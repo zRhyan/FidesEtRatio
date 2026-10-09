@@ -19,6 +19,7 @@ import {
 export default function App() {
   const [currentUser, setLocalCurrentUser] = useState('');
   const [quizzes, setQuizzes] = useState([]);
+  const [quizzesLoading, setQuizzesLoading] = useState(true);
   const [activeQuiz, setActiveQuiz] = useState(null);
   const [activeResult, setActiveResult] = useState(null);
   const [lastFinishedQuiz, setLastFinishedQuiz] = useState(null);
@@ -57,8 +58,12 @@ export default function App() {
   }, [currentUser, quizzes, activeResult]);
 
   const loadQuizzesList = async () => {
-    const list = await getQuizzes();
-    setQuizzes(list);
+    try {
+      const list = await getQuizzes();
+      setQuizzes(list);
+    } finally {
+      setQuizzesLoading(false);
+    }
   };
 
   const handleSaveUser = (name) => {
@@ -110,6 +115,16 @@ export default function App() {
     setLastFinishedQuiz(null);
   };
 
+  // Toque no logo: volta à lista de módulos (confirmando se houver quiz em andamento)
+  const handleGoHome = () => {
+    if (activeQuiz && !window.confirm('Deseja sair do quiz em andamento? O progresso desta tentativa será perdido.')) {
+      return;
+    }
+    setIsAdminActive(false);
+    handleBackToModules();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-[#0d0c0a] text-[#f4eedb] flex flex-col justify-between selection:bg-[#c5a059] selection:text-black">
       
@@ -119,6 +134,7 @@ export default function App() {
         onOpenUserModal={() => setIsUserModalOpen(true)}
         onLogoutUser={handleLogoutUser}
         onOpenAdmin={() => setIsAdminLoginModalOpen(true)}
+        onGoHome={handleGoHome}
         isAdminActive={isAdminActive}
         onExitAdmin={() => setIsAdminActive(false)}
         completedCount={completedCount}
@@ -156,6 +172,7 @@ export default function App() {
           /* Modo Lista de Módulos (Área do Estudante) */
           <QuizList
             quizzes={quizzes}
+            isLoading={quizzesLoading}
             currentUser={currentUser}
             onSelectQuiz={handleSelectQuiz}
             onOpenUserModal={() => setIsUserModalOpen(true)}

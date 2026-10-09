@@ -31,16 +31,17 @@ export default function AdminLoginModal({ isOpen, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex p-4 bg-black/80 backdrop-blur-sm animate-fadeIn overflow-y-auto">
       <div 
-        className="w-full max-w-sm bg-[#14120e] border border-[#52402a] rounded-xl shadow-2xl p-6 relative text-[#f4eedb]"
+        className="w-full max-w-sm m-auto bg-[#14120e] border border-[#52402a] rounded-xl shadow-2xl p-6 relative text-[#f4eedb]"
         style={{
           boxShadow: '0 0 35px rgba(197, 160, 89, 0.15), 0 20px 40px rgba(0,0,0,0.8)'
         }}
       >
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-[#8a7a63] hover:text-[#f4eedb] p-1 rounded-md transition-colors"
+          aria-label="Fechar"
+          className="absolute top-2 right-2 w-11 h-11 flex items-center justify-center text-[#8a7a63] hover:text-[#f4eedb] rounded-md transition-colors"
         >
           <X size={18} />
         </button>
@@ -53,7 +54,7 @@ export default function AdminLoginModal({ isOpen, onClose, onSuccess }) {
             Acesso do Catequista
           </h2>
           <p className="text-xs text-[#a3947c] mt-1">
-            Digite o PIN de administrador para gerenciar perguntas e acompanhar notas. (Padrão: <code className="text-[#c5a059] font-mono">veritas</code>)
+            Digite o PIN de administrador para gerenciar perguntas e acompanhar notas.
           </p>
         </div>
 
@@ -66,13 +67,15 @@ export default function AdminLoginModal({ isOpen, onClose, onSuccess }) {
                 onChange={(e) => { setPin(e.target.value); setError(false); }}
                 placeholder="Digite o PIN de acesso..."
                 autoFocus
+                autoComplete="off"
+                enterKeyHint="go"
                 className="w-full bg-[#1e1a14] border border-[#4d3a24] focus:border-[#c5a059] focus:ring-1 focus:ring-[#c5a059] rounded-lg px-4 py-3 text-[#f4eedb] placeholder-[#6d5f4c] outline-none transition-all text-sm text-center tracking-widest font-mono"
               />
             </div>
             {error && (
               <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1 justify-center">
                 <AlertCircle size={13} />
-                PIN incorreto. Tente "veritas".
+                PIN incorreto. Verifique e tente novamente.
               </p>
             )}
           </div>

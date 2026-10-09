@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import FormattedText from './FormattedText';
 import { 
   Award, 
   RotateCcw, 
@@ -26,7 +27,15 @@ export default function QuizResult({
   const { score, totalQuestions, answers = [] } = result;
   const percentage = Math.round((score / totalQuestions) * 100);
   const isPerfectScore = percentage === 100;
-  const incorrectAnswers = answers.filter(a => !a.isCorrect);
+  // Mantém o número original da questão para a revisão (ex.: "Questão 12")
+  const incorrectAnswers = answers
+    .map((a, i) => ({ ...a, number: i + 1 }))
+    .filter(a => !a.isCorrect);
+
+  // Ao exibir o resultado, a tela deve começar no topo (e não onde estava a última questão)
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, []);
 
   // Efeito de confetes festivos para quem atingiu 100%!
   useEffect(() => {
@@ -125,7 +134,8 @@ export default function QuizResult({
         <div className="grid grid-cols-3 gap-3 max-w-md mx-auto my-6 sm:my-8">
           <div className="bg-[#181510] border border-[#33281a] rounded-xl p-3 sm:p-4">
             <span className="text-[10px] sm:text-xs text-[#8c7d66] uppercase tracking-wider block">
-              Aproveitamento
+              <span className="sm:hidden">Nota</span>
+              <span className="hidden sm:inline">Aproveitamento</span>
             </span>
             <span className={`medieval-title text-xl sm:text-3xl font-bold ${isPerfectScore ? "text-[#c5a059]" : "text-[#ded3be]"}`}>
               {percentage}%
@@ -157,7 +167,11 @@ export default function QuizResult({
           {/* Botão Refazer Quiz (US06) */}
           <button
             onClick={onRetryQuiz}
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#9b7834] via-[#c5a059] to-[#9b7834] hover:brightness-110 text-[#0d0c0a] font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
+            className={`w-full sm:w-auto px-6 py-3.5 min-h-[48px] rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 ${
+              isPerfectScore
+                ? "bg-[#1c1813] hover:bg-[#28221a] text-[#b5a990] border border-[#3d2f1e]"
+                : "bg-gradient-to-r from-[#9b7834] via-[#c5a059] to-[#9b7834] hover:brightness-110 text-[#0d0c0a]"
+            }`}
           >
             <RotateCcw size={16} />
             <span>Refazer Quiz Agora</span>
@@ -167,7 +181,7 @@ export default function QuizResult({
           {isPerfectScore && (
             <button
               onClick={() => onOpenCertificate({ quiz, record: { highestScore: 100, completed100: true }, username })}
-              className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#362716] hover:bg-[#4d381f] text-[#ffd983] border border-[#7a5d34] font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md"
+              className="order-first w-full sm:w-auto px-6 py-3.5 min-h-[48px] rounded-xl bg-gradient-to-r from-[#9b7834] via-[#c5a059] to-[#9b7834] hover:brightness-110 text-[#0d0c0a] font-bold text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md"
             >
               <Award size={17} />
               <span>Visualizar Certificado</span>
@@ -177,7 +191,7 @@ export default function QuizResult({
           {/* Botão Voltar aos Módulos */}
           <button
             onClick={onBackToModules}
-            className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#1c1813] hover:bg-[#28221a] text-[#b5a990] border border-[#3d2f1e] text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5"
+            className="w-full sm:w-auto px-5 py-3.5 min-h-[48px] rounded-xl bg-[#1c1813] hover:bg-[#28221a] text-[#b5a990] border border-[#3d2f1e] text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5"
           >
             <BookOpen size={16} />
             <span>Outros Módulos</span>
@@ -222,25 +236,26 @@ export default function QuizResult({
                   className="bg-[#181113] border border-[#52252e] rounded-xl p-4 sm:p-5 space-y-3"
                 >
                   <div className="flex items-start gap-2.5">
-                    <span className="w-6 h-6 rounded-full bg-[#3b151d] text-rose-300 border border-[#6b2230] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                      {index + 1}
+                    <span className="w-7 h-7 rounded-full bg-[#3b151d] text-rose-300 border border-[#6b2230] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                      <span className="sr-only">Questão </span>
+                      {item.number}
                     </span>
-                    <h4 className="text-xs sm:text-sm font-bold text-[#f2e6dc] leading-relaxed">
-                      {item.questionText}
+                    <h4 className="flex-1 min-w-0 text-sm sm:text-base font-bold text-[#f2e6dc] leading-relaxed">
+                      <FormattedText text={item.questionText} variant="review" />
                     </h4>
                   </div>
 
                   {/* Resposta que o aluno marcou incorretamente */}
-                  <div className="p-3 rounded-lg bg-[#2d1217]/70 border border-[#7c2132]/60 text-xs sm:text-sm">
+                  <div className="p-3 sm:p-4 rounded-lg bg-[#2d1217]/70 border border-[#7c2132]/60 text-sm sm:text-base">
                     <div className="flex items-center gap-1.5 text-rose-300 font-bold mb-1 text-[11px] uppercase tracking-wider">
                       <XCircle size={14} />
                       <span>Sua resposta (Incorreta):</span>
                     </div>
-                    <p className="text-rose-100 italic">
-                      "{item.selectedOptionText}"
-                    </p>
+                    <div className="text-rose-100">
+                      <FormattedText text={item.selectedOptionText} variant="review" />
+                    </div>
                     {item.selectedOptionExplanation && (
-                      <p className="mt-2 text-[#d1b8bd] text-xs pt-2 border-t border-[#7c2132]/40">
+                      <p className="mt-2 text-[#d1b8bd] text-sm pt-2 border-t border-[#7c2132]/40">
                         <strong className="text-rose-200">Por que está incorreta: </strong>
                         {item.selectedOptionExplanation}
                       </p>
@@ -248,16 +263,16 @@ export default function QuizResult({
                   </div>
 
                   {/* Resposta correta com explicação */}
-                  <div className="p-3 rounded-lg bg-emerald-950/40 border border-emerald-700/60 text-xs sm:text-sm">
+                  <div className="p-3 sm:p-4 rounded-lg bg-emerald-950/40 border border-emerald-700/60 text-sm sm:text-base">
                     <div className="flex items-center gap-1.5 text-emerald-300 font-bold mb-1 text-[11px] uppercase tracking-wider">
                       <CheckCircle2 size={14} />
                       <span>Resposta Correta:</span>
                     </div>
-                    <p className="text-emerald-100 font-medium">
-                      "{item.correctOptionText}"
-                    </p>
+                    <div className="text-emerald-100 font-medium">
+                      <FormattedText text={item.correctOptionText} variant="review" />
+                    </div>
                     {item.correctOptionExplanation && (
-                      <p className="mt-2 text-[#bde0cc] text-xs pt-2 border-t border-emerald-800/40">
+                      <p className="mt-2 text-[#bde0cc] text-sm pt-2 border-t border-emerald-800/40">
                         <strong className="text-emerald-300">Justificativa doutrinária: </strong>
                         {item.correctOptionExplanation}
                       </p>
@@ -270,7 +285,7 @@ export default function QuizResult({
               <div className="pt-2 text-center">
                 <button
                   onClick={onRetryQuiz}
-                  className="px-6 py-2.5 rounded-lg bg-[#c5a059] text-black font-bold text-xs uppercase tracking-wider hover:bg-[#d6b46e] transition-colors"
+                  className="w-full sm:w-auto px-6 py-3.5 min-h-[48px] rounded-lg bg-[#c5a059] text-black font-bold text-xs uppercase tracking-wider hover:bg-[#d6b46e] transition-colors"
                 >
                   Tentar Novamente Agora
                 </button>

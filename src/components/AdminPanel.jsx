@@ -241,7 +241,7 @@ export default function AdminPanel({
 
         <button
           onClick={onClose}
-          className="px-4 py-2 rounded-lg bg-[#221c15] hover:bg-[#2e251a] text-[#ded3be] border border-[#4d3a24] text-xs font-semibold uppercase tracking-wider transition-colors"
+          className="w-full sm:w-auto px-4 min-h-[44px] rounded-lg bg-[#221c15] hover:bg-[#2e251a] text-[#ded3be] border border-[#4d3a24] text-xs font-semibold uppercase tracking-wider transition-colors"
         >
           Voltar à Área do Aluno
         </button>
@@ -365,8 +365,72 @@ export default function AdminPanel({
 
           </div>
 
-          {/* Tabela de Resultados */}
-          <div className="bg-[#14120e] border border-[#33281a] rounded-xl overflow-hidden shadow-xl">
+          {/* Cartões de Resultados (celular) */}
+          <div className="md:hidden space-y-3">
+            {filteredAttempts.length > 0 ? (
+              filteredAttempts.map((att, idx) => {
+                const is100 = att.completed100 || att.highestScore === 100;
+                const quizObj = quizzes.find(q => q.id === att.quizId);
+
+                return (
+                  <div key={idx} className="bg-[#14120e] border border-[#33281a] rounded-xl p-4 space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="w-8 h-8 shrink-0 rounded-full bg-[#292015] border border-[#4a3924] flex items-center justify-center text-xs text-[#c5a059] font-bold">
+                          {att.username.charAt(0).toUpperCase()}
+                        </span>
+                        <span className="font-bold text-[#f4eedb] truncate">{att.username}</span>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className={`medieval-title text-lg font-bold ${is100 ? "text-[#c5a059]" : "text-[#ded3be]"}`}>
+                          {att.highestScore}%
+                        </span>
+                        <span className="block text-[11px] text-[#7d6f5c] leading-none">
+                          {att.highestAcertos}/{att.totalQuestions} acertos
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-[#a3947c]">{quizObj ? quizObj.title : att.quizId}</p>
+
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      {is100 ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/50 border border-emerald-600/70 text-emerald-300 font-bold text-[11px]">
+                          <Award size={13} className="text-[#c5a059]" />
+                          Apto p/ Aula 2 (100%)
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-950/30 border border-amber-800/50 text-amber-300 text-[11px]">
+                          <Clock size={12} />
+                          Em Progresso
+                        </span>
+                      )}
+                      <span className="text-xs text-[#998b75]">
+                        {att.attemptsCount || 1} tentativa{(att.attemptsCount || 1) > 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    {is100 && (
+                      <button
+                        onClick={() => onOpenCertificate({ quiz: quizObj, record: att, username: att.username })}
+                        className="w-full min-h-[44px] rounded-lg bg-[#332517] hover:bg-[#4d3720] text-[#ffd983] border border-[#6b4e2a] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                      >
+                        <Award size={14} />
+                        <span>Ver Certificado</span>
+                      </button>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="bg-[#14120e] border border-[#33281a] rounded-xl p-6 text-center text-sm text-[#7d6f5c]">
+                Nenhum registro encontrado com os filtros atuais.
+              </div>
+            )}
+          </div>
+
+          {/* Tabela de Resultados (tablet / desktop) */}
+          <div className="hidden md:block bg-[#14120e] border border-[#33281a] rounded-xl overflow-hidden shadow-xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm border-collapse">
                 <thead>
@@ -387,11 +451,13 @@ export default function AdminPanel({
 
                       return (
                         <tr key={idx} className="hover:bg-[#1a1610] transition-colors">
-                          <td className="py-3.5 px-4 font-bold text-[#f4eedb] flex items-center gap-2">
-                            <span className="w-6 h-6 rounded-full bg-[#292015] border border-[#4a3924] flex items-center justify-center text-[11px] text-[#c5a059]">
-                              {att.username.charAt(0).toUpperCase()}
-                            </span>
-                            <span>{att.username}</span>
+                          <td className="py-3.5 px-4 font-bold text-[#f4eedb]">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-full bg-[#292015] border border-[#4a3924] flex items-center justify-center text-[11px] text-[#c5a059]">
+                                {att.username.charAt(0).toUpperCase()}
+                              </span>
+                              <span>{att.username}</span>
+                            </div>
                           </td>
 
                           <td className="py-3.5 px-4 text-[#ded3be]">
@@ -626,18 +692,21 @@ export default function AdminPanel({
                     <div>
                       <label className="block text-[11px] text-[#a3947c] uppercase font-semibold mb-1">
                         Enunciado da Pergunta:
+                        <span className="block normal-case font-normal text-[#7d6f5c] mt-0.5">
+                          Para formatar um silogismo, escreva uma linha por premissa iniciando com "• P1:", "• P2:" e "• C:".
+                        </span>
                       </label>
-                      <input
-                        type="text"
+                      <textarea
+                        rows={3}
                         value={q.question}
                         onChange={(e) => {
                           const updated = [...editingQuizData.questions];
                           updated[qIndex].question = e.target.value;
                           setEditingQuizData({ ...editingQuizData, questions: updated });
                         }}
-                        placeholder="Ex: O que é o Fideísmo e por que deve ser combatido?"
+                        placeholder={'Ex: O que é o Fideísmo e por que deve ser combatido?\n• P1: Primeira premissa\n• P2: Segunda premissa\n• C: Conclusão'}
                         required
-                        className="w-full bg-[#1e1a14] border border-[#4d3a24] rounded-lg px-3 py-2 text-sm text-[#f4eedb] outline-none focus:border-[#c5a059]"
+                        className="w-full resize-y bg-[#1e1a14] border border-[#4d3a24] rounded-lg px-3 py-2 text-sm text-[#f4eedb] outline-none focus:border-[#c5a059]"
                       />
                     </div>
 
@@ -658,7 +727,7 @@ export default function AdminPanel({
                                 : "bg-[#1f1a14] border-[#382b1b]"
                             }`}
                           >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-start gap-2">
                               {/* Rádio para marcar correta */}
                               <button
                                 type="button"
@@ -670,7 +739,7 @@ export default function AdminPanel({
                                   }));
                                   setEditingQuizData({ ...editingQuizData, questions: updated });
                                 }}
-                                className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold border transition-colors ${
+                                className={`w-10 h-10 shrink-0 rounded-md flex items-center justify-center text-xs font-bold border transition-colors ${
                                   opt.isCorrect
                                     ? "bg-emerald-600 border-emerald-400 text-white"
                                     : "bg-[#2a2217] border-[#4a3924] text-[#8c7d66] hover:border-[#c5a059]"
@@ -680,8 +749,8 @@ export default function AdminPanel({
                                 {letter}
                               </button>
 
-                              <input
-                                type="text"
+                              <textarea
+                                rows={2}
                                 value={opt.text}
                                 onChange={(e) => {
                                   const updated = [...editingQuizData.questions];
@@ -690,7 +759,7 @@ export default function AdminPanel({
                                 }}
                                 placeholder={`Texto da alternativa ${letter}...`}
                                 required
-                                className="flex-1 bg-[#14120e] border border-[#3d2f1e] rounded-md px-3 py-1.5 text-xs sm:text-sm text-[#f4eedb] outline-none focus:border-[#c5a059]"
+                                className="flex-1 min-w-0 resize-y bg-[#14120e] border border-[#3d2f1e] rounded-md px-3 py-2 text-sm text-[#f4eedb] outline-none focus:border-[#c5a059]"
                               />
 
                               {opt.isCorrect && (

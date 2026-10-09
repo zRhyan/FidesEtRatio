@@ -37,9 +37,9 @@ export default function UserModal({ isOpen, onClose, onSaveUser, currentUserName
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex p-4 bg-black/80 backdrop-blur-sm animate-fadeIn overflow-y-auto">
       <div 
-        className="w-full max-w-md bg-[#14120e] border border-[#52402a] rounded-xl shadow-2xl p-6 relative overflow-hidden text-[#f4eedb]"
+        className="w-full max-w-md m-auto bg-[#14120e] border border-[#52402a] rounded-xl shadow-2xl p-6 relative overflow-hidden text-[#f4eedb]"
         style={{
           boxShadow: '0 0 35px rgba(197, 160, 89, 0.15), 0 20px 40px rgba(0,0,0,0.8)'
         }}
@@ -54,7 +54,8 @@ export default function UserModal({ isOpen, onClose, onSaveUser, currentUserName
         {currentUserName && (
           <button 
             onClick={onClose}
-            className="absolute top-4 right-4 text-[#8a7a63] hover:text-[#f4eedb] p-1 rounded-md transition-colors"
+            aria-label="Fechar"
+            className="absolute top-2 right-2 w-11 h-11 flex items-center justify-center text-[#8a7a63] hover:text-[#f4eedb] rounded-md transition-colors"
           >
             <X size={18} />
           </button>
@@ -87,6 +88,11 @@ export default function UserModal({ isOpen, onClose, onSaveUser, currentUserName
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Ex: Carlos Silva, Beatriz, Irmão Lucas..."
                 autoFocus
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="words"
+                enterKeyHint="go"
+                maxLength={60}
                 className="w-full bg-[#1e1a14] border border-[#4d3a24] focus:border-[#c5a059] focus:ring-1 focus:ring-[#c5a059] rounded-lg px-4 py-3 text-[#f4eedb] placeholder-[#6d5f4c] outline-none transition-all text-sm"
               />
             </div>
@@ -113,7 +119,7 @@ export default function UserModal({ isOpen, onClose, onSaveUser, currentUserName
                 <button
                   key={u}
                   onClick={() => handleSelectRecent(u)}
-                  className="text-xs bg-[#221c15] hover:bg-[#382b1c] border border-[#443320] text-[#ded3be] px-2.5 py-1 rounded-md transition-colors"
+                  className="text-sm bg-[#221c15] hover:bg-[#382b1c] border border-[#443320] text-[#ded3be] px-3.5 py-2.5 min-h-[44px] rounded-md transition-colors"
                 >
                   {u}
                 </button>
