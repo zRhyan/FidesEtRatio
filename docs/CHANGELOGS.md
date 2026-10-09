@@ -100,9 +100,10 @@
 | Item | Descrição | Status | Dependência |
 | :--- | :--- | :---: | :--- |
 | **1. Conexão do Projeto Supabase (Opcional)** | Criar o projeto gratuito no Supabase, rodar o script SQL fornecido no painel e salvar a URL e Anon Key nas configurações. | ⏳ Pronto para config | Usuário criar projeto no dashboard supabase.com se desejar sincronização em nuvem |
-| **2. Repositório GitHub & Deploy no Netlify** | Inicializar repositório Git, criar `netlify.toml` e conectar ao Netlify para publicação online gratuita. | ⏳ Pronto para execução | Confirmação do usuário |
+| **2. Repositório Git Local** | Inicialização do branch `main`, configuração de `.gitignore` e commit inicial com todo o código e assets. | ✅ Concluído | Commit inicial criado (`32f183e`) |
+| **3. Push para o GitHub & Deploy no Netlify** | Adicionar remote (`git remote add origin <url>`), fazer o push (`git push -u origin main`) e conectar ao Netlify para publicação. | ⏳ Aguardando push do usuário | Usuário executar o push com suas credenciais SSH |
 
 ---
 
 ## 3. Próxima Etapa
-> **Quiz Oficial do Encontro 1 100% implementado e testado.** A aplicação está pronta para ser testada e publicada online quando desejar.
+> **Repositório Git inicializado e commitado.** Resta apenas o `git push` com seu SSH para o GitHub e a vinculação no Netlify.
