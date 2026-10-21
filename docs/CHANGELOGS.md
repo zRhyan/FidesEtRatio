@@ -7,8 +7,8 @@
 | :--- | :--- |
 | **Projeto** | Fides et Ratio (Fé e Razão) |
 | **Data do Registro** | 21 de Outubro de 2026 |
-| **Versão Atual** | v1.3.0 (Marcador de Acertos e Erros no Quiz) |
-| **Status Geral** | 🟢 **Sistema Completo em Produção & Fase 1 de Usabilidade Concluída** |
+| **Versão Atual** | v1.4.0 (Sistema de Gamificação Sacra, Vocações e Progressão RPG) |
+| **Status Geral** | 🟢 **Sistema Completo com Gamificação Sacra & 7 Vocações em Produção** |
 | **Ambiente Alvo** | GitHub + Netlify + Supabase (Mobile-First) |
 
 ---
@@ -112,6 +112,28 @@
   - Adição de marcador compacto no cabeçalho de navegação do quiz com contagem acumulada em tempo real.
   - Símbolo de "check" em verde esmeralda com o total de acertos (`Check` do Lucide) e símbolo "x" em vermelho rubro com o total de erros (`X` do Lucide).
   - Design harmonizado com a estética sacra medieval/pergaminho e totalmente responsivo para dispositivos móveis.
+
+### 1.12 Sistema de Gamificação Sacra, 7 Vocações da Igreja e Progressão RPG (`v1.4.0`)
+- [x] **Documento Executivo & Arquitetura (`docs/documento_executivo_gamificacao_rpg.md`):**
+  - Levantamento completo da mecânica das 7 Vocações, fórmulas de XP, escada de níveis e regras de herança.
+- [x] **Catálogo das 7 Vocações & Galeria de Expoentes (`src/data/vocationsData.js`):**
+  - Vocações: *Intelectual*, *Mística*, *Apologética*, *Caritativa*, *Missionária*, *Pastoral* e *Artística*.
+  - Escala de 7 graus/níveis de ascensão histórica por vocação (ex: *Ouvinte dos Preâmbulos* até *Doutor da Igreja* / *Doutor Místico* / *Artífice do Templo de Deus*).
+  - Todos os santos e expoentes com pinturas e fotografias históricas em domínio público, axiomas doutrinários e biografias pedagógicas aprofundadas.
+- [x] **Motor de Gamificação e Persistência Híbrida (`src/services/storage.js`):**
+  - **Calibração de XP:** 100% dos 4 módulos oficiais (4 × 9.000 XP = 36.000 XP) eleva o catequizando exatamente ao Nível 4; níveis 5 a 7 (até 130.000 XP) incentivam repetição e estudo contínuo.
+  - **Multiplicador de 3.0x:** Primeira conclusão com 100% de acerto concede bônus de 3.0x sobre as questões.
+  - **Prática Subsequente:** Repetições após os 100% concedem o XP base das questões acertadas (sem o multiplicador 3.0x).
+  - **Regra Estrita de Abandono:** Sair do quiz antes da tela final resulta em 0 XP (não há crédito parcial).
+  - **Herança Sagrada (1/7):** Ao migrar para uma vocação inédita, o usuário herda 1/7 do maior XP histórico. Ao retornar a uma vocação visitada, retoma seu progresso original intacto.
+  - **Retroatividade Total:** Catequizandos com histórico anterior em `attempts` recebem automaticamente o XP retroativo creditado na vocação padrão (*Intelectual*).
+  - Persistência sincronizada com a tabela `user_profiles` no Supabase e fallback transparente em `localStorage`.
+- [x] **Componentes e Experiência do Usuário (UI/UX):**
+  - **`Header.jsx`:** Badge da vocação com ícone litúrgico, nível atual, mini barra de progresso dourada e toque rápido para seleção de vocação.
+  - **`VocationModal.jsx` & `SaintDetailModal.jsx`:** Modal nobre com seleção entre as 7 vocações, visualização da escada de ascensão, prévia da herança de XP e galeria de expoentes com modais biográficos.
+  - **`QuizPlayer.jsx`:** Diálogo de confirmação de saída alertando claramente sobre o descarte do XP em caso de abandono.
+  - **`QuizResult.jsx`:** Card dourado de XP ganho, badge comemorativo 3.0x de maestria e banner comemorativo de *LEVEL UP* com chuva de confetes sacros.
+  - **`AdminPanel.jsx`:** Tabela e cards mobile de alunos enriquecidos com vocação ativa, grau e XP acumulado; editor de quizzes com campo personalizável de `xpReward` por questão (padrão 100 XP).
 
 ---
 

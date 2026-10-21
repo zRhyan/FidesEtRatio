@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import FormattedText from './FormattedText';
 import { 
@@ -10,8 +10,8 @@ import {
   ChevronDown, 
   ChevronUp, 
   Sparkles,
-  ArrowRight,
-  ShieldAlert
+  ShieldAlert,
+  TrendingUp
 } from 'lucide-react';
 
 export default function QuizResult({ 
@@ -24,7 +24,7 @@ export default function QuizResult({
 }) {
   const [showErrorReview, setShowErrorReview] = useState(false);
 
-  const { score, totalQuestions, answers = [] } = result;
+  const { score, totalQuestions, answers = [], xpResult = null } = result;
   const percentage = Math.round((score / totalQuestions) * 100);
   const isPerfectScore = percentage === 100;
   // Mantém o número original da questão para a revisão (ex.: "Questão 12")
@@ -37,9 +37,9 @@ export default function QuizResult({
     window.scrollTo({ top: 0 });
   }, []);
 
-  // Efeito de confetes festivos para quem atingiu 100%!
+  // Efeito de confetes festivos para quem atingiu 100% ou subiu de nível!
   useEffect(() => {
-    if (isPerfectScore) {
+    if (isPerfectScore || xpResult?.leveledUp) {
       const duration = 2.5 * 1000;
       const end = Date.now() + duration;
 
@@ -65,7 +65,7 @@ export default function QuizResult({
       };
       frame();
     }
-  }, [isPerfectScore]);
+  }, [isPerfectScore, xpResult?.leveledUp]);
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-16 animate-fadeIn text-[#f4eedb]">
@@ -160,6 +160,70 @@ export default function QuizResult({
             </span>
           </div>
         </div>
+
+        {/* Recompensa de Experiência & Ascensão Espiritual (RPG Gamificação) */}
+        {xpResult && (
+          <div className="max-w-md mx-auto my-5 p-4 sm:p-5 rounded-2xl bg-[#17130e] border border-[#5e4726] shadow-xl text-left space-y-3 animate-fadeIn">
+            {/* Banner Triunfal de Level Up */}
+            {xpResult.leveledUp && (
+              <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#9b7834]/30 via-[#c5a059]/40 to-[#9b7834]/30 border border-[#c5a059] flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[#c5a059] text-black flex items-center justify-center shrink-0 shadow">
+                  <TrendingUp size={20} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#fce8be] block">
+                    Ascensão Espiritual • Subiu de Grau!
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-white">
+                    Novo Grau: {xpResult.vocationTitle} (Nível {xpResult.newLevel})
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Crédito de XP */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#251e15] border border-[#523e24] flex items-center justify-center text-[#c5a059] shrink-0">
+                  <Sparkles size={16} />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-[#a3947c] block">
+                    Experiência Conquistada
+                  </span>
+                  <span className="text-base sm:text-lg font-bold text-[#f5ebd7]">
+                    +{xpResult.earnedXp?.toLocaleString()} XP
+                  </span>
+                </div>
+              </div>
+
+              {xpResult.multiplier === 3 && (
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#352512] border border-[#c5a059] text-[#fadc8c] shadow">
+                  Bônus 3.0x Maestria
+                </span>
+              )}
+            </div>
+
+            {/* Mensagem explicativa */}
+            <p className="text-xs text-[#b8a78d] leading-relaxed pt-2 border-t border-[#33281a]">
+              {xpResult.isFirst100 ? (
+                <>
+                  <span className="text-[#c5a059] font-bold">Glória! </span>
+                  Por gabaritar este módulo pela primeira vez, seu ganho foi triplicado pelo Multiplicador Sagrado de Maestria (3.0x)!
+                </>
+              ) : xpResult.is100 ? (
+                <>
+                  <span className="text-emerald-300 font-semibold">Revisão Doutrinária: </span>
+                  XP base creditado à sua vocação ativa por este módulo já dominado.
+                </>
+              ) : (
+                <>
+                  XP creditado pelas {score} questões acertadas. Atingir 100% de acerto desbloqueia o Multiplicador Sagrado de 3.0x!
+                </>
+              )}
+            </p>
+          </div>
+        )}
 
         {/* Primary Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">

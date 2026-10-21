@@ -1,8 +1,35 @@
 import React from 'react';
-import { Shield, User, LogOut, Award, ArrowLeftRight } from 'lucide-react';
+import { 
+  Shield, 
+  User, 
+  LogOut, 
+  Award, 
+  ArrowLeftRight,
+  BookOpen,
+  Flame,
+  HeartHandshake,
+  Compass,
+  Users,
+  Palette,
+  Sparkles
+} from 'lucide-react';
+import { getVocationById } from '../data/vocationsData.js';
+import { getLevelInfo } from '../services/storage.js';
+
+const VOCATION_ICONS = {
+  BookOpen,
+  Flame,
+  Shield,
+  HeartHandshake,
+  Compass,
+  Users,
+  Palette
+};
 
 export default function Header({ 
   currentUser, 
+  userProfile,
+  onOpenVocations,
   onOpenUserModal, 
   onLogoutUser, 
   onOpenAdmin,
@@ -11,6 +38,12 @@ export default function Header({
   onExitAdmin,
   completedCount = 0
 }) {
+  const activeVocId = userProfile?.active_vocation || 'intelectual';
+  const vocationObj = getVocationById(activeVocId);
+  const currentVocXp = userProfile?.vocations_data?.[activeVocId]?.xp || 0;
+  const currentLevelInfo = getLevelInfo(currentVocXp, activeVocId);
+  const VocationIcon = VOCATION_ICONS[vocationObj?.iconName] || BookOpen;
+
   return (
     <header className="sticky top-0 z-40 bg-[#0f0e0c]/90 backdrop-blur-md border-b border-[#33281a] shadow-lg">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 sm:gap-3">
@@ -48,6 +81,41 @@ export default function Header({
         {/* Right Actions */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           
+          {/* Badge de Vocação & Nível (abre o VocationModal) */}
+          {currentUser && userProfile && (
+            <button
+              type="button"
+              onClick={onOpenVocations}
+              title={`Vocação ${vocationObj?.name || 'Consagrada'}. Toque para ver as 7 Vocações da Igreja`}
+              className="flex items-center gap-1.5 sm:gap-2 min-h-[44px] bg-[#1a1510] hover:bg-[#251e16] border border-[#523e24] hover:border-[#c5a059] rounded-full px-2 sm:px-3 py-1 shadow transition-all group shrink-0"
+            >
+              <div className="w-6 h-6 rounded-full bg-[#2a2015] border border-[#c5a059]/60 flex items-center justify-center text-[#c5a059] group-hover:scale-105 transition-transform shrink-0">
+                <VocationIcon size={13} />
+              </div>
+              <div className="text-left">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#c5a059] hidden min-[460px]:inline">
+                    {vocationObj?.shortName || 'Vocação'}
+                  </span>
+                  <span className="text-[11px] font-bold text-[#f5ebd7]">
+                    Nvl {currentLevelInfo.level}
+                  </span>
+                </div>
+                <div className="hidden md:flex items-center gap-1.5 mt-0.5">
+                  <div className="w-14 h-1.5 bg-[#251d14] rounded-full overflow-hidden border border-[#4a3922]">
+                    <div 
+                      className="h-full bg-gradient-to-r from-[#8f6d2f] to-[#e6cb8e]"
+                      style={{ width: `${currentLevelInfo.progressPercent}%` }}
+                    />
+                  </div>
+                  <span className="text-[9px] text-[#b3a186]">
+                    {currentLevelInfo.progressPercent}%
+                  </span>
+                </div>
+              </div>
+            </button>
+          )}
+
           {/* User Status / Badge (toda a área é clicável para trocar de estudante) */}
           {currentUser ? (
             <button

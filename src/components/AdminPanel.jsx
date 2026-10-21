@@ -18,7 +18,9 @@ import {
   AlertCircle,
   Clock,
   Sparkles,
-  Download
+  Download,
+  Flame,
+  Shield
 } from 'lucide-react';
 import { 
   getAllAttemptsSummary, 
@@ -27,8 +29,11 @@ import {
   getAdminPin, 
   setAdminPin,
   getSupabaseConfig,
-  saveSupabaseConfig
+  saveSupabaseConfig,
+  getAllUserProfiles,
+  getLevelInfo
 } from '../services/storage';
+import { getVocationById } from '../data/vocationsData';
 
 export default function AdminPanel({ 
   quizzes = [], 
@@ -38,6 +43,7 @@ export default function AdminPanel({
 }) {
   const [activeTab, setActiveTab] = useState('scores'); // 'scores' | 'quizzes' | 'settings'
   const [attempts, setAttempts] = useState([]);
+  const [userProfilesMap, setUserProfilesMap] = useState({});
   const [selectedQuizFilter, setSelectedQuizFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | '100' | 'pending'
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,6 +79,12 @@ export default function AdminPanel({
   const loadAttempts = async () => {
     const data = await getAllAttemptsSummary();
     setAttempts(data);
+    try {
+      const profiles = await getAllUserProfiles();
+      setUserProfilesMap(profiles || {});
+    } catch (err) {
+      console.warn('Erro ao carregar perfis no Admin:', err);
+    }
   };
 
   // Filtragem dos registros de pontuação
@@ -107,6 +119,7 @@ export default function AdminPanel({
         {
           id: `q-${Date.now()}-1`,
           question: 'Enunciado da primeira questão...',
+          xpReward: 100,
           options: [
             {
               id: `opt-1`,
@@ -200,6 +213,7 @@ export default function AdminPanel({
     const newQ = {
       id: `q-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       question: '',
+      xpReward: 100,
       options: [
         { id: `opt-1`, text: '', isCorrect: true, explanation: '' },
         { id: `opt-2`, text: '', isCorrect: false, explanation: '' },
@@ -371,6 +385,11 @@ export default function AdminPanel({
               filteredAttempts.map((att, idx) => {
                 const is100 = att.completed100 || att.highestScore === 100;
                 const quizObj = quizzes.find(q => q.id === att.quizId);
+                const profile = userProfilesMap[att.username.toLowerCase()];
+                const activeVocId = profile?.active_vocation || 'intelectual';
+                const vocObj = getVocationById(activeVocId);
+                const vocXp = profile?.vocations_data?.[activeVocId]?.xp || 0;
+                const lvlInfo = getLevelInfo(vocXp, activeVocId);
 
                 return (
                   <div key={idx} className="bg-[#14120e] border border-[#33281a] rounded-xl p-4 space-y-3">
@@ -389,6 +408,18 @@ export default function AdminPanel({
                           {att.highestAcertos}/{att.totalQuestions} acertos
                         </span>
                       </div>
+                    </div>
+
+                    {/* Vocação e Grau do Aluno (RPG Gamificação) */}
+                    <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg bg-[#191510] border border-[#2e2316] text-xs">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="w-2 h-2 rounded-full bg-[#c5a059] shrink-0" />
+                        <span className="font-bold text-[#c5a059] truncate">{vocObj?.shortName}</span>
+                        <span className="text-[#ded3be] text-[11px] truncate">Nvl {lvlInfo.level} ({lvlInfo.title})</span>
+                      </div>
+                      <span className="font-mono text-[11px] text-[#a3947c] shrink-0 font-bold">
+                        {vocXp.toLocaleString()} XP
+                      </span>
                     </div>
 
                     <p className="text-xs text-[#a3947c]">{quizObj ? quizObj.title : att.quizId}</p>
@@ -436,6 +467,7 @@ export default function AdminPanel({
                 <thead>
                   <tr className="bg-[#1b1712] text-[#c5a059] border-b border-[#33281a] uppercase tracking-wider text-[11px]">
                     <th className="py-3 px-4 font-bold">Aluno / Participante</th>
+                    <th className="py-3 px-4 font-bold">Vocação & Nível</th>
                     <th className="py-3 px-4 font-bold">Módulo / Quiz</th>
                     <th className="py-3 px-4 font-bold text-center">Nota Mais Alta (Recorde)</th>
                     <th className="py-3 px-4 font-bold text-center">Status de Aprovação</th>
@@ -448,6 +480,11 @@ export default function AdminPanel({
                     filteredAttempts.map((att, idx) => {
                       const is100 = att.completed100 || att.highestScore === 100;
                       const quizObj = quizzes.find(q => q.id === att.quizId);
+                      const profile = userProfilesMap[att.username.toLowerCase()];
+                      const activeVocId = profile?.active_vocation || 'intelectual';
+                      const vocObj = getVocationById(activeVocId);
+                      const vocXp = profile?.vocations_data?.[activeVocId]?.xp || 0;
+                      const lvlInfo = getLevelInfo(vocXp, activeVocId);
 
                       return (
                         <tr key={idx} className="hover:bg-[#1a1610] transition-colors">
@@ -457,6 +494,23 @@ export default function AdminPanel({
                                 {att.username.charAt(0).toUpperCase()}
                               </span>
                               <span>{att.username}</span>
+                            </div>
+                          </td>
+
+                          {/* Vocação & Nível */}
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#251d13] border border-[#523e24] text-[#e6cb8e]">
+                                {vocObj?.shortName}
+                              </span>
+                              <div className="leading-tight">
+                                <span className="text-xs font-semibold text-[#ded3be] block">
+                                  Nvl {lvlInfo.level} • {lvlInfo.title}
+                                </span>
+                                <span className="text-[10px] text-[#7d6f5c] font-mono">
+                                  {vocXp.toLocaleString()} XP
+                                </span>
+                              </div>
                             </div>
                           </td>
 
@@ -510,7 +564,7 @@ export default function AdminPanel({
                     })
                   ) : (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-[#7d6f5c]">
+                      <td colSpan={7} className="py-8 text-center text-[#7d6f5c]">
                         Nenhum registro encontrado com os filtros atuais.
                       </td>
                     </tr>
@@ -673,10 +727,29 @@ export default function AdminPanel({
                     key={q.id || qIndex}
                     className="p-4 sm:p-5 rounded-xl bg-[#17140f] border border-[#3d2e1c] space-y-4"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-[#c5a059] uppercase tracking-wider">
-                        Questão {qIndex + 1}
-                      </span>
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-[#c5a059] uppercase tracking-wider">
+                          Questão {qIndex + 1}
+                        </span>
+                        <div className="flex items-center gap-1.5 bg-[#1b1610] border border-[#3d2e1c] px-2.5 py-1 rounded-md">
+                          <label className="text-[11px] text-[#a3947c] font-medium">Recompensa:</label>
+                          <input
+                            type="number"
+                            min="10"
+                            max="1000"
+                            step="10"
+                            value={q.xpReward !== undefined ? q.xpReward : 100}
+                            onChange={(e) => {
+                              const updated = [...editingQuizData.questions];
+                              updated[qIndex].xpReward = Math.max(0, parseInt(e.target.value, 10) || 0);
+                              setEditingQuizData({ ...editingQuizData, questions: updated });
+                            }}
+                            className="w-16 bg-[#120f0b] border border-[#4d3a24] rounded px-1.5 py-0.5 text-xs text-[#c5a059] font-bold text-center outline-none focus:border-[#c5a059]"
+                          />
+                          <span className="text-[10px] text-[#8c7d66] font-semibold">XP</span>
+                        </div>
+                      </div>
                       {editingQuizData.questions.length > 1 && (
                         <button
                           type="button"
@@ -914,7 +987,20 @@ CREATE TABLE IF NOT EXISTS fides_settings (
 );
 
 ALTER TABLE fides_settings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public Read/Write Settings" ON fides_settings FOR ALL USING (true) WITH CHECK (true);`}
+CREATE POLICY "Public Read/Write Settings" ON fides_settings FOR ALL USING (true) WITH CHECK (true);
+
+-- Tabela para guardar perfis de RPG, vocações e XP dos alunos:
+CREATE TABLE IF NOT EXISTS user_profiles (
+  username TEXT PRIMARY KEY,
+  active_vocation TEXT NOT NULL DEFAULT 'intelectual',
+  vocations_data JSONB NOT NULL DEFAULT '{}'::jsonb,
+  completed_quizzes_100 TEXT[] DEFAULT ARRAY[]::TEXT[],
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public Read/Write User Profiles" ON user_profiles FOR ALL USING (true) WITH CHECK (true);`}
               </pre>
             </div>
           </div>

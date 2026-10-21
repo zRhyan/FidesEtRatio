@@ -1,16 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import FormattedText from './FormattedText';
 import { 
   ArrowLeft, 
   ArrowRight, 
-  Check,
-  X,
+  Check, 
+  X, 
   CheckCircle2, 
-  XCircle, 
-  HelpCircle, 
-  Sparkles, 
-  BookOpen,
-  Award
+  XCircle 
 } from 'lucide-react';
 
 export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
@@ -45,7 +41,7 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
   const handleExit = () => {
     if (
       userAnswers.length > 0 &&
-      !window.confirm('Deseja abandonar o quiz? O progresso desta tentativa será perdido.')
+      !window.confirm('Deseja abandonar o quiz? Todo o progresso e o XP acumulado nesta tentativa serão perdidos.')
     ) {
       return;
     }

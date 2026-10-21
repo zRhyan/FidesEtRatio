@@ -1,12 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
-import { DEFAULT_QUIZZES } from '../data/defaultQuizzes';
+import { DEFAULT_QUIZZES } from '../data/defaultQuizzes.js';
 
 const STORAGE_KEYS = {
   CURRENT_USER: 'fides_current_user',
   QUIZZES: 'fides_quizzes_data',
   ATTEMPTS: 'fides_quiz_attempts',
   ADMIN_PIN: 'fides_admin_pin',
-  SUPABASE_CONFIG: 'fides_supabase_config'
+  SUPABASE_CONFIG: 'fides_supabase_config',
+  USER_PROFILES: 'fides_user_profiles'
 };
 
 const DEFAULT_PIN = 'veritas';
@@ -416,3 +417,444 @@ export async function getAllAttemptsSummary() {
 
   return attempts;
 }
+
+/* =========================================================
+   SISTEMA DE GAMIFICAÇÃO SACRA & RPG (VOCAÇÕES, NÍVEIS E XP)
+========================================================= */
+
+export const LEVEL_THRESHOLDS = [
+  { level: 1, xpRequired: 0, title: 'Iniciante' },
+  { level: 2, xpRequired: 9000, title: 'Discípulo' },
+  { level: 3, xpRequired: 22000, title: 'Bacharel' },
+  { level: 4, xpRequired: 36000, title: 'Leitor' },
+  { level: 5, xpRequired: 60000, title: 'Magister' },
+  { level: 6, xpRequired: 90000, title: 'Mestre' },
+  { level: 7, xpRequired: 130000, title: 'Doutor' },
+];
+
+export const VOCATION_TITLES = {
+  intelectual: [
+    'Ouvinte dos Preâmbulos',
+    'Discípulo Escolástico',
+    'Bacharel das Súmulas',
+    'Leitor Sentenciário',
+    'Magister Teológico',
+    'Mestre Disputante',
+    'Doutor da Igreja'
+  ],
+  mistica: [
+    'Peregrino do Átrio',
+    'Buscador do Recolhimento',
+    'Habitante das Quintas Moradas',
+    'Contemplador da Noite Escura',
+    'Chama Viva de Amor',
+    'Matrimônio Espiritual',
+    'Doutor Místico'
+  ],
+  apologetica: [
+    'Catecúmeno em Defesa',
+    'Sentinela da Ortodoxia',
+    'Polemosta da Verdade',
+    'Escudo da Tradição',
+    'Defensor Fidei',
+    'Mártir da Razão',
+    'Apologeta Iluminado'
+  ],
+  caritativa: [
+    'Servidor dos Pobres',
+    'Irmão Hospitaleiro',
+    'Bálsamo dos Aflitos',
+    'Arauto da Misericórdia',
+    'Coluna da Basiliade',
+    'Servo dos Servos de Deus',
+    'Pai dos Desamparados'
+  ],
+  missionaria: [
+    'Peregrino do Evangelho',
+    'Semeador do Kerygma',
+    'Voz no Areópago',
+    'Desbravador dos Gentios',
+    'Arauto das Nações',
+    'Apóstolo dos Povos',
+    'Patrono das Missões'
+  ],
+  pastoral: [
+    'Catequista dos Simples',
+    'Educador de Almas',
+    'Pastor da Juventude',
+    'Médico dos Penitentes',
+    'Mestre do Sistema Preventivo',
+    'Bom Pastor das Comunidades',
+    'Patrono dos Pastores'
+  ],
+  artistica: [
+    'Cantor do Santuário',
+    'Artesão da Pedra e da Luz',
+    'Iconógrafo do Mistério',
+    'Harpa do Espírito Santo',
+    'Mestre de Capela Celeste',
+    'Poeta da Divina Comédia',
+    'Artífice do Templo de Deus'
+  ]
+};
+
+export const DEFAULT_VOCATION_ID = 'intelectual';
+
+/**
+ * Calcula o nível (1 a 7) baseado no XP total
+ */
+export function calculateLevelFromXp(xp = 0) {
+  const safeXp = Math.max(0, Number(xp) || 0);
+  for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
+    if (safeXp >= LEVEL_THRESHOLDS[i].xpRequired) {
+      return LEVEL_THRESHOLDS[i].level;
+    }
+  }
+  return 1;
+}
+
+/**
+ * Retorna o título honorífico sacro de uma vocação para dado nível
+ */
+export function getVocationTitle(vocationId, level = 1) {
+  const titles = VOCATION_TITLES[vocationId] || VOCATION_TITLES[DEFAULT_VOCATION_ID];
+  const safeLevel = Math.max(1, Math.min(7, Number(level) || 1));
+  return titles[safeLevel - 1] || titles[0];
+}
+
+/**
+ * Retorna métricas detalhadas sobre o nível e progresso até o próximo nível
+ */
+export function getLevelInfo(xp = 0, vocationId = DEFAULT_VOCATION_ID) {
+  const safeXp = Math.max(0, Number(xp) || 0);
+  const currentLevel = calculateLevelFromXp(safeXp);
+  const currentThreshold = LEVEL_THRESHOLDS[currentLevel - 1];
+  const nextThreshold = LEVEL_THRESHOLDS[currentLevel] || null;
+  const title = getVocationTitle(vocationId, currentLevel);
+
+  let progressPercent = 100;
+  let xpIntoLevel = 0;
+  let xpForNextLevel = 0;
+  let xpRemaining = 0;
+
+  if (nextThreshold) {
+    const range = nextThreshold.xpRequired - currentThreshold.xpRequired;
+    xpIntoLevel = safeXp - currentThreshold.xpRequired;
+    xpForNextLevel = range;
+    xpRemaining = Math.max(0, nextThreshold.xpRequired - safeXp);
+    progressPercent = range > 0 ? Math.min(100, Math.round((xpIntoLevel / range) * 100)) : 100;
+  }
+
+  return {
+    level: currentLevel,
+    title,
+    xp: safeXp,
+    progressPercent,
+    xpIntoLevel,
+    xpForNextLevel,
+    xpRemaining,
+    isMaxLevel: !nextThreshold,
+    nextTitle: nextThreshold ? getVocationTitle(vocationId, currentLevel + 1) : null,
+    nextThresholdXp: nextThreshold ? nextThreshold.xpRequired : null
+  };
+}
+
+/**
+ * Herança Sagrada: calcula 1/7 (~14.28%) do maior XP do usuário
+ */
+export function calculateInheritedXp(highestXp = 0) {
+  return Math.floor(Math.max(0, Number(highestXp) || 0) / 7);
+}
+
+/**
+ * Cria a estrutura base das 7 vocações
+ */
+function getInitialVocationsData() {
+  const vocations = ['intelectual', 'mistica', 'apologetica', 'caritativa', 'missionaria', 'pastoral', 'artistica'];
+  const data = {};
+  vocations.forEach(v => {
+    data[v] = {
+      xp: 0,
+      level: 1,
+      visited: v === DEFAULT_VOCATION_ID
+    };
+  });
+  return data;
+}
+
+/**
+ * Retroatividade: calcula o XP que um usuário já deveria ter com base em suas tentativas anteriores
+ */
+function calculateRetroactiveXpForUser(username) {
+  const attempts = getUserAllRecords(username);
+  let retroactiveXp = 0;
+  const completed100Quizzes = [];
+
+  attempts.forEach(att => {
+    const totalQ = att.totalQuestions || 30;
+    if (att.completed100 || att.highestScore === 100) {
+      if (!completed100Quizzes.includes(att.quizId)) {
+        completed100Quizzes.push(att.quizId);
+      }
+      // 30 questões * 100 XP * 3.0 (multiplicador) = 9000 XP
+      retroactiveXp += (totalQ * 100) * 3;
+    } else if (att.highestAcertos > 0) {
+      retroactiveXp += (att.highestAcertos * 100);
+    }
+  });
+
+  return { retroactiveXp, completed100Quizzes };
+}
+
+/**
+ * Busca ou inicializa o perfil do usuário (nuvem + local) com suporte a retroatividade
+ */
+export async function getUserProfile(username) {
+  const cleanUser = (username || '').trim();
+  if (!cleanUser) return null;
+
+  let profile = null;
+
+  // 1. Tentar ler do Supabase
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('user_profiles')
+        .select('*')
+        .eq('username', cleanUser)
+        .maybeSingle();
+
+      if (!error && data) {
+        profile = {
+          username: data.username,
+          active_vocation: data.active_vocation || DEFAULT_VOCATION_ID,
+          vocations_data: data.vocations_data || getInitialVocationsData(),
+          completed_quizzes_100: Array.isArray(data.completed_quizzes_100) ? data.completed_quizzes_100 : [],
+          updated_at: data.updated_at
+        };
+      }
+    } catch (err) {
+      console.warn('Erro ao carregar user_profile do Supabase:', err);
+    }
+  }
+
+  // 2. Fallback para LocalStorage
+  if (!profile) {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.USER_PROFILES);
+      if (raw) {
+        const map = JSON.parse(raw);
+        if (map && map[cleanUser.toLowerCase()]) {
+          profile = map[cleanUser.toLowerCase()];
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // 3. Se ainda não existe, cria com retroatividade dos quizzes já respondidos!
+  if (!profile) {
+    const { retroactiveXp, completed100Quizzes } = calculateRetroactiveXpForUser(cleanUser);
+    const initialVocData = getInitialVocationsData();
+    initialVocData[DEFAULT_VOCATION_ID] = {
+      xp: retroactiveXp,
+      level: calculateLevelFromXp(retroactiveXp),
+      visited: true
+    };
+
+    profile = {
+      username: cleanUser,
+      active_vocation: DEFAULT_VOCATION_ID,
+      vocations_data: initialVocData,
+      completed_quizzes_100: completed100Quizzes,
+      updated_at: new Date().toISOString()
+    };
+
+    await saveUserProfile(profile);
+  } else {
+    // Garante integridade de todas as 7 vocações
+    let modified = false;
+    const baseVocData = getInitialVocationsData();
+    if (!profile.vocations_data) {
+      profile.vocations_data = baseVocData;
+      modified = true;
+    } else {
+      Object.keys(baseVocData).forEach(vKey => {
+        if (!profile.vocations_data[vKey]) {
+          profile.vocations_data[vKey] = baseVocData[vKey];
+          modified = true;
+        }
+      });
+    }
+
+    if (modified) {
+      await saveUserProfile(profile);
+    }
+  }
+
+  return profile;
+}
+
+/**
+ * Salva o perfil do usuário em LocalStorage e no Supabase
+ */
+export async function saveUserProfile(profile) {
+  if (!profile || !profile.username) return null;
+  const cleanUser = profile.username.trim();
+  const now = new Date().toISOString();
+
+  const safeProfile = {
+    ...profile,
+    username: cleanUser,
+    active_vocation: profile.active_vocation || DEFAULT_VOCATION_ID,
+    vocations_data: profile.vocations_data || getInitialVocationsData(),
+    completed_quizzes_100: Array.isArray(profile.completed_quizzes_100) ? profile.completed_quizzes_100 : [],
+    updated_at: now
+  };
+
+  // Salvar no LocalStorage
+  try {
+    let map = {};
+    const raw = localStorage.getItem(STORAGE_KEYS.USER_PROFILES);
+    if (raw) map = JSON.parse(raw);
+    map[cleanUser.toLowerCase()] = safeProfile;
+    localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(map));
+  } catch (e) {
+    console.error('Erro ao salvar user_profile no localStorage:', e);
+  }
+
+  // Sincronizar com Supabase se conectado
+  if (supabaseClient) {
+    try {
+      await supabaseClient.from('user_profiles').upsert({
+        username: cleanUser,
+        active_vocation: safeProfile.active_vocation,
+        vocations_data: safeProfile.vocations_data,
+        completed_quizzes_100: safeProfile.completed_quizzes_100,
+        updated_at: now
+      }, { onConflict: 'username' });
+    } catch (err) {
+      console.warn('Falha ao salvar user_profile no Supabase:', err);
+    }
+  }
+
+  return safeProfile;
+}
+
+/**
+ * Troca a vocação ativa do usuário, aplicando a herança de 1/7 se for a primeira vez
+ */
+export async function switchUserVocation(username, targetVocationId) {
+  const profile = await getUserProfile(username);
+  if (!profile) return null;
+
+  const vocData = profile.vocations_data || getInitialVocationsData();
+  const currentTarget = vocData[targetVocationId] || { xp: 0, level: 1, visited: false };
+
+  // Se a vocação nunca foi visitada, aplica herança sagrada de 1/7 da maior vocação!
+  if (!currentTarget.visited) {
+    const highestXp = Math.max(
+      ...Object.values(vocData).map(v => Number(v.xp) || 0)
+    );
+    const inheritedXp = calculateInheritedXp(highestXp);
+    vocData[targetVocationId] = {
+      xp: inheritedXp,
+      level: calculateLevelFromXp(inheritedXp),
+      visited: true
+    };
+  }
+
+  profile.active_vocation = targetVocationId;
+  profile.vocations_data = vocData;
+
+  return await saveUserProfile(profile);
+}
+
+/**
+ * Credita o XP ao concluir um quiz e retorna o resumo com multiplicador e level up
+ */
+export async function creditQuizCompletionXp({ username, quizId, score, totalQuestions, xpPerQuestion = 100, customBaseXp = null }) {
+  const cleanUser = (username || '').trim();
+  if (!cleanUser || !quizId) return null;
+
+  const profile = await getUserProfile(cleanUser);
+  if (!profile) return null;
+
+  const activeVocId = profile.active_vocation || DEFAULT_VOCATION_ID;
+  const vocRecord = profile.vocations_data[activeVocId] || { xp: 0, level: 1, visited: true };
+
+  const is100 = score === totalQuestions && totalQuestions > 0;
+  const completedList = profile.completed_quizzes_100 || [];
+  const isFirst100 = is100 && !completedList.includes(quizId);
+
+  let multiplier = 1.0;
+  const baseXp = customBaseXp !== null ? customBaseXp : (score * xpPerQuestion);
+  let earnedXp = baseXp;
+
+  if (isFirst100) {
+    multiplier = 3.0;
+    earnedXp = baseXp * 3;
+    completedList.push(quizId);
+    profile.completed_quizzes_100 = completedList;
+  }
+
+  const oldXp = vocRecord.xp || 0;
+  const oldLevel = vocRecord.level || 1;
+  const newXp = oldXp + earnedXp;
+  const newLevel = calculateLevelFromXp(newXp);
+
+  vocRecord.xp = newXp;
+  vocRecord.level = newLevel;
+  vocRecord.visited = true;
+  profile.vocations_data[activeVocId] = vocRecord;
+
+  await saveUserProfile(profile);
+
+  return {
+    earnedXp,
+    multiplier,
+    isFirst100,
+    is100,
+    oldXp,
+    newXp,
+    oldLevel,
+    newLevel,
+    leveledUp: newLevel > oldLevel,
+    activeVocation: activeVocId,
+    vocationTitle: getVocationTitle(activeVocId, newLevel)
+  };
+}
+
+/**
+ * Retorna todos os perfis cadastrados (para a aba de alunos do AdminPanel)
+ */
+export async function getAllUserProfiles() {
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('user_profiles')
+        .select('*');
+
+      if (!error && data && data.length > 0) {
+        const map = {};
+        data.forEach(item => {
+          map[item.username.toLowerCase()] = item;
+        });
+        return map;
+      }
+    } catch (err) {
+      console.warn('Erro ao carregar lista de user_profiles do Supabase:', err);
+    }
+  }
+
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.USER_PROFILES);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.error(e);
+  }
+
+  return {};
+}
+

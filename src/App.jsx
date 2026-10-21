@@ -7,17 +7,22 @@ import QuizResult from './components/QuizResult';
 import AdminPanel from './components/AdminPanel';
 import AdminLoginModal from './components/AdminLoginModal';
 import CertificateModal from './components/CertificateModal';
+import VocationModal from './components/VocationModal';
 import { 
   getCurrentUser, 
   setCurrentUser, 
   clearCurrentUser, 
   getQuizzes, 
   recordQuizAttempt,
-  getUserAllRecords
+  getUserAllRecords,
+  getUserProfile,
+  creditQuizCompletionXp,
+  switchUserVocation
 } from './services/storage';
 
 export default function App() {
   const [currentUser, setLocalCurrentUser] = useState('');
+  const [userProfile, setUserProfile] = useState(null);
   const [quizzes, setQuizzes] = useState([]);
   const [quizzesLoading, setQuizzesLoading] = useState(true);
   const [activeQuiz, setActiveQuiz] = useState(null);
@@ -29,15 +34,30 @@ export default function App() {
   const [isAdminActive, setIsAdminActive] = useState(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState(false);
   const [certificateData, setCertificateData] = useState(null);
+  const [isVocationModalOpen, setIsVocationModalOpen] = useState(false);
 
   // Estatística de módulos concluídos pelo aluno atual
   const [completedCount, setCompletedCount] = useState(0);
+
+  const loadProfile = async (username) => {
+    if (!username) {
+      setUserProfile(null);
+      return;
+    }
+    try {
+      const profile = await getUserProfile(username);
+      setUserProfile(profile);
+    } catch (err) {
+      console.warn('Erro ao carregar perfil do usuário:', err);
+    }
+  };
 
   useEffect(() => {
     // Carregar usuário ativo
     const user = getCurrentUser();
     if (user) {
       setLocalCurrentUser(user);
+      loadProfile(user);
     } else {
       // Se for primeiro acesso, convidar a se identificar
       setIsUserModalOpen(true);
@@ -69,11 +89,15 @@ export default function App() {
   const handleSaveUser = (name) => {
     const saved = setCurrentUser(name);
     setLocalCurrentUser(saved);
+    if (saved) {
+      loadProfile(saved);
+    }
   };
 
   const handleLogoutUser = () => {
     clearCurrentUser();
     setLocalCurrentUser('');
+    setUserProfile(null);
     setIsUserModalOpen(true);
   };
 
@@ -87,6 +111,7 @@ export default function App() {
     const quizBeingFinished = activeQuiz;
     setLastFinishedQuiz(quizBeingFinished);
 
+    let xpResult = null;
     if (currentUser && quizBeingFinished) {
       await recordQuizAttempt({
         username: currentUser,
@@ -95,11 +120,49 @@ export default function App() {
         totalQuestions,
         answers
       });
+
+      // Calcula o XP base somando o xpReward individual de cada questão acertada
+      let customBaseXp = 0;
+      if (Array.isArray(quizBeingFinished.questions) && answers) {
+        quizBeingFinished.questions.forEach((q, idx) => {
+          const ans = answers[idx];
+          if (ans && ans.isCorrect) {
+            customBaseXp += (Number(q.xpReward) || 100);
+          }
+        });
+      } else {
+        customBaseXp = score * 100;
+      }
+
+      // Credita XP com a regra estrita de conclusão e multiplicador 3.0x
+      try {
+        xpResult = await creditQuizCompletionXp({
+          username: currentUser,
+          quizId: quizBeingFinished.id,
+          score,
+          totalQuestions,
+          xpPerQuestion: 100,
+          customBaseXp
+        });
+        await loadProfile(currentUser);
+      } catch (err) {
+        console.warn('Erro ao creditar XP:', err);
+      }
     }
 
-    setActiveResult({ score, totalQuestions, answers });
+    setActiveResult({ score, totalQuestions, answers, xpResult });
     setActiveQuiz(null);
     await loadQuizzesList();
+  };
+
+  const handleSelectVocation = async (targetVocationId) => {
+    if (!currentUser) return;
+    try {
+      const updated = await switchUserVocation(currentUser, targetVocationId);
+      setUserProfile(updated);
+    } catch (err) {
+      console.warn('Erro ao trocar vocação:', err);
+    }
   };
 
   const handleRetryQuiz = () => {
@@ -131,6 +194,8 @@ export default function App() {
       {/* Top Header */}
       <Header
         currentUser={currentUser}
+        userProfile={userProfile}
+        onOpenVocations={() => setIsVocationModalOpen(true)}
         onOpenUserModal={() => setIsUserModalOpen(true)}
         onLogoutUser={handleLogoutUser}
         onOpenAdmin={() => setIsAdminLoginModalOpen(true)}
@@ -203,6 +268,13 @@ export default function App() {
         isOpen={Boolean(certificateData)}
         onClose={() => setCertificateData(null)}
         data={certificateData}
+      />
+
+      <VocationModal
+        isOpen={isVocationModalOpen}
+        onClose={() => setIsVocationModalOpen(false)}
+        userProfile={userProfile}
+        onSelectVocation={handleSelectVocation}
       />
 
       {/* Footer Sacro Medieval */}
