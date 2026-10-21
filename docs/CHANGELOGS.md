@@ -7,7 +7,7 @@
 | :--- | :--- |
 | **Projeto** | Fides et Ratio (Fé e Razão) |
 | **Data do Registro** | 21 de Outubro de 2026 |
-| **Versão Atual** | v1.2.0 (Supabase Keep-Alive & Usabilidade Mobile) |
+| **Versão Atual** | v1.3.0 (Marcador de Acertos e Erros no Quiz) |
 | **Status Geral** | 🟢 **Sistema Completo em Produção & Fase 1 de Usabilidade Concluída** |
 | **Ambiente Alvo** | GitHub + Netlify + Supabase (Mobile-First) |
 
@@ -106,6 +106,12 @@
   - Execução programada **2 vezes por semana** (toda segunda e quinta-feira às 12:00 UTC / 09:00 BRT via cron `0 12 * * 1,4`), mantendo intervalo máximo de 4 dias entre pings (muito abaixo do teto de 7 dias do Supabase).
   - Consulta leve via `curl` no endpoint PostgREST (`GET /rest/v1/fides_settings?select=key&limit=1`), registrando atividade real no PostgreSQL para resetar o temporizador de inatividade.
   - Suporte a acionamento manual imediato (`workflow_dispatch`) e integração com os secrets `SUPABASE_URL` e `SUPABASE_ANON_KEY`.
+
+### 1.11 Marcador de Acertos e Erros em Tempo Real durante o Quiz (`v1.3.0`)
+- [x] **Feedback Contínuo de Desempenho (`src/components/QuizPlayer.jsx`):**
+  - Adição de marcador compacto no cabeçalho de navegação do quiz com contagem acumulada em tempo real.
+  - Símbolo de "check" em verde esmeralda com o total de acertos (`Check` do Lucide) e símbolo "x" em vermelho rubro com o total de erros (`X` do Lucide).
+  - Design harmonizado com a estética sacra medieval/pergaminho e totalmente responsivo para dispositivos móveis.
 
 ---
 

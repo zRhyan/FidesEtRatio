@@ -3,6 +3,8 @@ import FormattedText from './FormattedText';
 import { 
   ArrowLeft, 
   ArrowRight, 
+  Check,
+  X,
   CheckCircle2, 
   XCircle, 
   HelpCircle, 
@@ -21,6 +23,8 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
   const currentQuestion = questions[currentQuestionIndex];
   const totalQuestions = questions.length;
   const progressPercent = Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100);
+  const correctCount = userAnswers.filter(a => a.isCorrect).length;
+  const incorrectCount = userAnswers.filter(a => !a.isCorrect).length;
   const feedbackRef = useRef(null);
 
   // Ao entrar no quiz, garante que a tela comece no topo
@@ -109,22 +113,43 @@ export default function QuizPlayer({ quiz, onFinishQuiz, onExit }) {
       
       {/* Top Navigation & Progress */}
       <div className="bg-[#14120e] border border-[#3d2f1e] rounded-xl p-4 sm:p-5 shadow-lg space-y-3">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <button
             onClick={handleExit}
-            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#a3947c] hover:text-[#c5a059] transition-colors min-h-[44px] px-2.5 -ml-2.5 rounded-md hover:bg-[#201a13]"
+            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#a3947c] hover:text-[#c5a059] transition-colors min-h-[44px] px-2 sm:px-2.5 -ml-2 rounded-md hover:bg-[#201a13] shrink-0"
+            title="Abandonar Quiz"
           >
             <ArrowLeft size={15} />
-            <span>Abandonar Quiz</span>
+            <span className="hidden min-[380px]:inline">Abandonar Quiz</span>
+            <span className="min-[380px]:hidden">Sair</span>
           </button>
 
-          <span className="hidden sm:block text-xs font-semibold uppercase tracking-widest text-[#c5a059] truncate">
+          <span className="hidden md:block text-xs font-semibold uppercase tracking-widest text-[#c5a059] truncate max-w-[200px] lg:max-w-xs text-center">
             {quiz.title}
           </span>
 
-          <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-[#251e15] border border-[#4a3924] text-[#e6cb8e]">
-            Questão {currentQuestionIndex + 1} de {totalQuestions}
-          </span>
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Marcador de Acertos e Erros */}
+            <div 
+              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-md bg-[#1c1712] border border-[#3d2f1e] text-xs font-bold shadow-inner"
+              aria-label={`Placar atual: ${correctCount} acertos e ${incorrectCount} erros`}
+              title={`Placar: ${correctCount} acertos, ${incorrectCount} erros`}
+            >
+              <div className="flex items-center gap-1 text-emerald-400">
+                <Check size={14} strokeWidth={2.5} />
+                <span>{correctCount}</span>
+              </div>
+              <span className="w-px h-3 bg-[#3d2f1e]" />
+              <div className="flex items-center gap-1 text-red-400">
+                <X size={14} strokeWidth={2.5} />
+                <span>{incorrectCount}</span>
+              </div>
+            </div>
+
+            <span className="text-xs font-bold px-2 sm:px-2.5 py-1 rounded-md bg-[#251e15] border border-[#4a3924] text-[#e6cb8e]">
+              <span className="hidden sm:inline">Questão </span>{currentQuestionIndex + 1} de {totalQuestions}
+            </span>
+          </div>
         </div>
 
         {/* Progress bar */}
