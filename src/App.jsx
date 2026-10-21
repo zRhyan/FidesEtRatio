@@ -47,6 +47,9 @@ export default function App() {
     try {
       const profile = await getUserProfile(username);
       setUserProfile(profile);
+      const records = getUserAllRecords(username);
+      const count = records.filter(r => r.completed100 || r.highestScore === 100).length;
+      setCompletedCount(count);
     } catch (err) {
       console.warn('Erro ao carregar perfil do usuário:', err);
     }
@@ -86,11 +89,11 @@ export default function App() {
     }
   };
 
-  const handleSaveUser = (name) => {
+  const handleSaveUser = async (name) => {
     const saved = setCurrentUser(name);
     setLocalCurrentUser(saved);
     if (saved) {
-      loadProfile(saved);
+      await loadProfile(saved);
     }
   };
 

@@ -378,6 +378,72 @@ export function getUserAllRecords(username) {
   }
 }
 
+/**
+ * Sincroniza as tentativas de um usuário da nuvem (Supabase) para o LocalStorage
+ */
+export async function syncUserAttemptsFromCloud(username) {
+  const cleanUser = (username || '').trim();
+  if (!cleanUser || !supabaseClient) return [];
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('attempts')
+      .select('*')
+      .ilike('username', cleanUser);
+
+    if (!error && Array.isArray(data) && data.length > 0) {
+      let localAttempts = [];
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.ATTEMPTS);
+        if (raw) localAttempts = JSON.parse(raw);
+      } catch (e) {
+        localAttempts = [];
+      }
+
+      data.forEach(item => {
+        const cloudRecord = {
+          id: `att-${item.id || Date.now()}`,
+          username: item.username,
+          quizId: item.quiz_id,
+          highestScore: item.highest_score || 0,
+          highestAcertos: item.highest_acertos || 0,
+          totalQuestions: item.total_questions || 30,
+          completed100: Boolean(item.completed_100),
+          attemptsCount: item.attempts_count || 1,
+          lastAttemptDate: item.last_attempt_date,
+          lastAttemptScore: item.last_attempt_score || 0,
+          answers: item.answers_payload || []
+        };
+
+        const existingIdx = localAttempts.findIndex(
+          a => a.username.toLowerCase() === cleanUser.toLowerCase() && a.quizId === cloudRecord.quizId
+        );
+
+        if (existingIdx >= 0) {
+          const curr = localAttempts[existingIdx];
+          localAttempts[existingIdx] = {
+            ...curr,
+            highestScore: Math.max(curr.highestScore || 0, cloudRecord.highestScore),
+            highestAcertos: Math.max(curr.highestAcertos || 0, cloudRecord.highestAcertos),
+            completed100: curr.completed100 || cloudRecord.completed100,
+            attemptsCount: Math.max(curr.attemptsCount || 1, cloudRecord.attemptsCount),
+            lastAttemptDate: cloudRecord.lastAttemptDate || curr.lastAttemptDate
+          };
+        } else {
+          localAttempts.push(cloudRecord);
+        }
+      });
+
+      localStorage.setItem(STORAGE_KEYS.ATTEMPTS, JSON.stringify(localAttempts));
+      return localAttempts;
+    }
+  } catch (err) {
+    console.warn('Erro ao sincronizar tentativas do Supabase:', err);
+  }
+
+  return [];
+}
+
 export async function getAllAttemptsSummary() {
   let attempts = [];
 
@@ -607,21 +673,30 @@ function calculateRetroactiveXpForUser(username) {
 }
 
 /**
- * Busca ou inicializa o perfil do usuário (nuvem + local) com suporte a retroatividade
+ * Busca ou inicializa o perfil do usuário (nuvem + local) com suporte a retroatividade e auto-sincronização
  */
 export async function getUserProfile(username) {
   const cleanUser = (username || '').trim();
   if (!cleanUser) return null;
 
+  // 1. Sincronizar tentativas do Supabase primeiro (garante que tentativas feitas no celular venham para o computador)
+  if (supabaseClient) {
+    try {
+      await syncUserAttemptsFromCloud(cleanUser);
+    } catch (e) {
+      console.warn('Falha prévia ao sincronizar tentativas:', e);
+    }
+  }
+
   let profile = null;
 
-  // 1. Tentar ler do Supabase
+  // 2. Tentar ler do Supabase com busca case-insensitive (ilike)
   if (supabaseClient) {
     try {
       const { data, error } = await supabaseClient
         .from('user_profiles')
         .select('*')
-        .eq('username', cleanUser)
+        .ilike('username', cleanUser)
         .maybeSingle();
 
       if (!error && data) {
@@ -632,13 +707,23 @@ export async function getUserProfile(username) {
           completed_quizzes_100: Array.isArray(data.completed_quizzes_100) ? data.completed_quizzes_100 : [],
           updated_at: data.updated_at
         };
+
+        // Atualizar o cache LocalStorage
+        try {
+          let map = {};
+          const raw = localStorage.getItem(STORAGE_KEYS.USER_PROFILES);
+          if (raw) map = JSON.parse(raw);
+          map[cleanUser.toLowerCase()] = profile;
+          localStorage.setItem(STORAGE_KEYS.USER_PROFILES, JSON.stringify(map));
+        } catch (e) {}
       }
     } catch (err) {
       console.warn('Erro ao carregar user_profile do Supabase:', err);
     }
   }
 
-  // 2. Fallback para LocalStorage
+  // 3. Fallback para LocalStorage se a nuvem ainda não tiver o perfil
+  let loadedFromLocal = false;
   if (!profile) {
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.USER_PROFILES);
@@ -646,6 +731,7 @@ export async function getUserProfile(username) {
         const map = JSON.parse(raw);
         if (map && map[cleanUser.toLowerCase()]) {
           profile = map[cleanUser.toLowerCase()];
+          loadedFromLocal = true;
         }
       }
     } catch (e) {
@@ -653,7 +739,12 @@ export async function getUserProfile(username) {
     }
   }
 
-  // 3. Se ainda não existe, cria com retroatividade dos quizzes já respondidos!
+  // Se o perfil existia localmente (ex: celular) e a nuvem estava vazia, faz o upload imediato para o Supabase!
+  if (loadedFromLocal && profile && supabaseClient) {
+    saveUserProfile(profile).catch(err => console.warn('Falha no auto-upload do perfil local para a nuvem:', err));
+  }
+
+  // 4. Se ainda não existe perfil, cria com base nas tentativas anteriores já sincronizadas
   if (!profile) {
     const { retroactiveXp, completed100Quizzes } = calculateRetroactiveXpForUser(cleanUser);
     const initialVocData = getInitialVocationsData();
@@ -673,8 +764,30 @@ export async function getUserProfile(username) {
 
     await saveUserProfile(profile);
   } else {
-    // Garante integridade de todas as 7 vocações
+    // 5. Garantia de consistência: se o perfil tem MENOS XP do que as tentativas provam que ele já alcançou
+    const { retroactiveXp, completed100Quizzes } = calculateRetroactiveXpForUser(cleanUser);
+    const activeVoc = profile.active_vocation || DEFAULT_VOCATION_ID;
+    const currentVocXp = profile.vocations_data?.[activeVoc]?.xp || 0;
+
     let modified = false;
+
+    if (retroactiveXp > currentVocXp) {
+      if (!profile.vocations_data[activeVoc]) {
+        profile.vocations_data[activeVoc] = { xp: 0, level: 1, visited: true };
+      }
+      profile.vocations_data[activeVoc].xp = retroactiveXp;
+      profile.vocations_data[activeVoc].level = calculateLevelFromXp(retroactiveXp);
+      profile.vocations_data[activeVoc].visited = true;
+
+      const mergedQuizzes = Array.from(new Set([
+        ...(profile.completed_quizzes_100 || []),
+        ...completed100Quizzes
+      ]));
+      profile.completed_quizzes_100 = mergedQuizzes;
+      modified = true;
+    }
+
+    // Garante integridade de todas as 7 vocações
     const baseVocData = getInitialVocationsData();
     if (!profile.vocations_data) {
       profile.vocations_data = baseVocData;
@@ -697,7 +810,7 @@ export async function getUserProfile(username) {
 }
 
 /**
- * Salva o perfil do usuário em LocalStorage e no Supabase
+ * Salva o perfil do usuário em LocalStorage e no Supabase com proteção contra duplicatas de maiúsculas/minúsculas
  */
 export async function saveUserProfile(profile) {
   if (!profile || !profile.username) return null;
@@ -727,8 +840,20 @@ export async function saveUserProfile(profile) {
   // Sincronizar com Supabase se conectado
   if (supabaseClient) {
     try {
+      // Manter o mesmo casing exato do usuário se ele já constar no banco
+      let targetUsername = cleanUser;
+      const { data: existing } = await supabaseClient
+        .from('user_profiles')
+        .select('username')
+        .ilike('username', cleanUser)
+        .maybeSingle();
+
+      if (existing?.username) {
+        targetUsername = existing.username;
+      }
+
       await supabaseClient.from('user_profiles').upsert({
-        username: cleanUser,
+        username: targetUsername,
         active_vocation: safeProfile.active_vocation,
         vocations_data: safeProfile.vocations_data,
         completed_quizzes_100: safeProfile.completed_quizzes_100,
