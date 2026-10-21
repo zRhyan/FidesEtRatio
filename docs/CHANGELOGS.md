@@ -120,6 +120,7 @@
   - Vocações: *Intelectual*, *Mística*, *Apologética*, *Caritativa*, *Missionária*, *Pastoral* e *Artística*.
   - Escala de 7 graus/níveis de ascensão histórica por vocação (ex: *Ouvinte dos Preâmbulos* até *Doutor da Igreja* / *Doutor Místico* / *Artífice do Templo de Deus*).
   - Todos os santos e expoentes com pinturas e fotografias históricas em domínio público, axiomas doutrinários e biografias pedagógicas aprofundadas.
+  - **Imagens Locais Autônomas (`public/assets/expoentes/` e `src/assets/expoentes/`):** Todos os 50 retratos e pinturas clássicas baixados localmente para independência total de servidores externos e suporte offline irrestrito.
 - [x] **Motor de Gamificação e Persistência Híbrida (`src/services/storage.js`):**
   - **Calibração de XP:** 100% dos 4 módulos oficiais (4 × 9.000 XP = 36.000 XP) eleva o catequizando exatamente ao Nível 4; níveis 5 a 7 (até 130.000 XP) incentivam repetição e estudo contínuo.
   - **Multiplicador de 3.0x:** Primeira conclusão com 100% de acerto concede bônus de 3.0x sobre as questões.

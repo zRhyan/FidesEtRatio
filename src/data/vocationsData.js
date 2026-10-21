@@ -35,7 +35,7 @@ export const VOCATIONS_DATA = [
         dates: '354–430',
         facet: 'Facetas Teológica e Filosófica',
         summary: 'O maior intelecto da Patrística Latina; uniu o neoplatonismo cristão à metafísica do tempo, da memória e da Trindade.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Saint_Augustine_by_Philippe_de_Champaigne.jpg/440px-Saint_Augustine_by_Philippe_de_Champaigne.jpg',
+        imageUrl: '/assets/expoentes/santo-agostinho-intelectual.jpg',
         bio: 'O maior intelecto da Patrística Latina. Passando pelo maniqueísmo e pelo neoplatonismo antes da conversão, estabeleceu as bases de toda a filosofia e teologia ocidentais. Em Sobre a Trindade (De Trinitate), formulou as analogias psicológicas da mente humana (memória, inteligência e vontade) para perscrutar o mistério trinitário, além de inaugurar a filosofia da história e a reflexão metafísica sobre o tempo e a eternidade.'
       },
       {
@@ -44,7 +44,7 @@ export const VOCATIONS_DATA = [
         dates: '329–379',
         facet: 'Faceta Teológica e Cosmológica',
         summary: 'Líder dos Padres Capadócios; estabeleceu a distinção trinitária entre ousia e hypostasis e autor do Hexaemeron.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Saint_Basil_the_Great_icon.jpg/440px-Saint_Basil_the_Great_icon.jpg',
+        imageUrl: '/assets/expoentes/sao-basilio-intelectual.jpg',
         bio: 'Líder dos Padres Capadócios, formado nas melhores escolas de retórica e filosofia de Atenas. Foi o grande arquiteto da distinção filosófico-teológica entre ousia (natureza) e hypostasis (pessoa), fórmula que permitiu à Igreja resolver as crises trinitárias do século IV e definir a divindade do Espírito Santo. Escreveu também o Hexaemeron, monumental comentário cosmológico sobre a criação.'
       },
       {
@@ -53,7 +53,7 @@ export const VOCATIONS_DATA = [
         dates: '1098–1179',
         facet: 'Faceta Científica e Cosmológica',
         summary: 'Doutora da Igreja e abadessa beneditina; enciclopedista pioneira em medicina natural, botânica e antropologia.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Hildegard_von_Bingen.jpg/440px-Hildegard_von_Bingen.jpg',
+        imageUrl: '/assets/expoentes/santa-hildegarda-intelectual.jpg',
         bio: 'Antes mesmo das universidades medievais, esta abadessa beneditina e Doutora da Igreja produziu tratados enciclopédicos de ciências naturais e medicina: Physica e Causae et Curae. Neles catalogou centenas de plantas e minerais, descreveu propriedades farmacológicas e articulou uma profunda antropologia que via corpo e alma em harmonia ecológica com o cosmos (viriditas).'
       },
       {
@@ -62,7 +62,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 1200–1280',
         facet: 'Faceta Científica e Aristotélica',
         summary: 'Doctor Universalis e mestre de Tomás de Aquino; pioneiro do método empírico observacional na botânica e zoologia.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Albertus_Magnus.jpg/440px-Albertus_Magnus.jpg',
+        imageUrl: '/assets/expoentes/santo-alberto-magno.jpg',
         bio: 'Mestre de Tomás de Aquino e chamado de Doctor Universalis. Além de teólogo e comentador de toda a obra de Aristóteles, foi um cientista empírico pioneiro na botânica, zoologia, mineralogia e astronomia, defendendo que a investigação da natureza pelo método observacional é um caminho autônomo e legítimo para conhecer o Criador.'
       },
       {
@@ -71,7 +71,7 @@ export const VOCATIONS_DATA = [
         dates: '1225–1274',
         facet: 'Faceta Filosófica e Sistemática',
         summary: 'Doutor Angélico; cume da arquitetura escolástica, harmonizou a razão clássica aristotélica e a Revelação cristã.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/St-thomas-aquinas.jpg/440px-St-thomas-aquinas.jpg',
+        imageUrl: '/assets/expoentes/santo-tomas-intelectual.jpg',
         bio: 'Frade dominicano e "Doutor Angélico". Em um período em que a redescoberta das obras de Aristóteles ameaçava desestabilizar a cristandade, Tomás realizou uma síntese monumental entre razão e fé. Sua Suma Teológica e suas Questões Disputadas permanecem como o ápice da arquitetura escolástica e da metafísica do ser (actus essendi).'
       },
       {
@@ -80,7 +80,7 @@ export const VOCATIONS_DATA = [
         dates: '1221–1274',
         facet: 'Faceta Escolástica e Exemplarismo',
         summary: 'Doutor Seráfico; amigo de Santo Tomás, estruturou a escola franciscana e a filosofia do exemplarismo.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Saint_Bonaventure_by_Claude_Vignon.jpg/440px-Saint_Bonaventure_by_Claude_Vignon.jpg',
+        imageUrl: '/assets/expoentes/sao-boaventura-intelectual.jpg',
         bio: 'Contemporâneo e amigo de Tomás de Aquino na Universidade de Paris, o "Doutor Seráfico" estruturou a teologia franciscana. Em obras como o Brevilóquio e o Comentário às Sentenças, desenvolveu a filosofia do exemplarismo (todas as criaturas como vestígios e imagens do Verbo) e a teoria da iluminação intelectual.'
       },
       {
@@ -89,7 +89,7 @@ export const VOCATIONS_DATA = [
         dates: '1232–1316',
         facet: 'Faceta Filosófica e Lógica',
         summary: 'Polímata catalão; criador da Ars Magna, precursor da ciência da computação e da lógica combinatória.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Ramon_Llull_portrait.jpg/440px-Ramon_Llull_portrait.jpg',
+        imageUrl: '/assets/expoentes/beato-ramon-llull-intelectual.jpg',
         bio: 'Polímata maiorquino autor de mais de 260 obras em catalão, árabe e latim, precursor da lógica formal e da ciência da computação. Concebeu a Ars Magna, sistema mecânico e lógico-combinatório de conceitos universais que buscava unificar todos os ramos do saber sob os princípios primeiros da metafísica.'
       },
       {
@@ -98,7 +98,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 1266–1308',
         facet: 'Faceta Metafísica e Dogmática',
         summary: 'Doctor Subtilis; mestre do rigor analítico, formulou a fundamentação teológica da Imaculada Conceição.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/John_Duns_Scotus_portrait.jpg/440px-John_Duns_Scotus_portrait.jpg',
+        imageUrl: '/assets/expoentes/beato-duns-escoto.jpg',
         bio: 'Franciscano escocês conhecido como o "Doutor Sutil" pela extrema precisão lógica de seus argumentos. Desenvolveu conceitos metafísicos originais (haecceitas e a univocidade do ser) e forneceu a solução teológica definitiva para o dogma da Imaculada Conceição (a redenção preservativa).'
       },
       {
@@ -107,7 +107,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 676–749',
         facet: 'Faceta Sistemática Oriental',
         summary: 'O Tomás de Aquino do Oriente; autor da primeira grande suma teológica sistemática do cristianismo.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/St_John_of_Damascus.jpg/440px-St_John_of_Damascus.jpg',
+        imageUrl: '/assets/expoentes/sao-joao-damasceno-intelectual.jpg',
         bio: 'Considerado o "São Tomás de Aquino do Oriente", este monge sírio e Doutor da Igreja escreveu a Fonte do Conhecimento (Pege Gnoseos), cuja terceira parte, A Exposição Exata da Fé Ortodoxa, foi a primeira grande suma teológica sistemática cristã, servindo de base direta para a escolástica latina.'
       },
       {
@@ -116,7 +116,7 @@ export const VOCATIONS_DATA = [
         dates: '1548–1617',
         facet: 'Faceta Metafísica e Jurídica',
         summary: 'Líder da Segunda Escolástica de Salamanca; suas Disputações Metafísicas fundaram as bases do direito internacional.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Francisco_Suarez.jpg/440px-Francisco_Suarez.jpg',
+        imageUrl: '/assets/expoentes/francisco-suarez.jpg',
         bio: 'Padre jesuíta espanhol e principal expoente da Escola de Salamanca. Suas Disputações Metafísicas influenciaram Descartes e Leibniz, e seus tratados jurídicos sobre o ius gentium lançaram as bases do direito internacional moderno e da teoria da soberania popular.'
       },
       {
@@ -125,7 +125,7 @@ export const VOCATIONS_DATA = [
         dates: '1623–1662',
         facet: 'Faceta Científica e Epistemológica',
         summary: 'Gênio matemático e físico; inventor da Pascalina, pioneiro das probabilidades e da física dos fluidos.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Blaise_pascal.jpg/440px-Blaise_pascal.jpg',
+        imageUrl: '/assets/expoentes/blaise-pascal-intelectual.jpg',
         bio: 'Prodígio francês que inventou a calculadora mecânica aos 19 anos, lançou as bases do cálculo de probabilidades, formulou o Princípio de Pascal na hidrostática e comprovou o vácuo atmosférico, refletindo profundamente sobre os limites do método geométrico diante das verdades do coração.'
       },
       {
@@ -134,7 +134,7 @@ export const VOCATIONS_DATA = [
         dates: '1801–1890',
         facet: 'Faceta Epistemológica e Teológica',
         summary: 'Cardeal e Doutor da Igreja; autor de Gramática do Assentimento e da doutrina do desenvolvimento do dogma.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/John_Henry_Newman_by_Emmeline_Deane.jpg/440px-John_Henry_Newman_by_Emmeline_Deane.jpg',
+        imageUrl: '/assets/expoentes/john-henry-newman-intelectual.jpg',
         bio: 'Teólogo britânico canonizado. Em Gramática do Assentimento, investigou a epistemologia da crença (o "sentido ilativo" para alcançar a certeza concreta), revolucionou a compreensão histórica do desenvolvimento do dogma e defendeu o modelo da universidade em A Ideia de uma Universidade.'
       },
       {
@@ -143,7 +143,7 @@ export const VOCATIONS_DATA = [
         dates: '1891–1942',
         facet: 'Faceta Fenomenológica e Ontológica',
         summary: 'Assistente de Husserl e carmelita mártir; uniu a fenomenologia moderna à metafísica de Santo Tomás.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Edith_Stein_1912.jpg/440px-Edith_Stein_1912.jpg',
+        imageUrl: '/assets/expoentes/edith-stein-intelectual.jpg',
         bio: 'Filósofa judia alemã, aluna e assistente de Edmund Husserl. Sua tese Sobre o Problema da Empatia é clássico da fenomenologia. Convertida, escreveu Ser Finito e Ser Eterno, diálogo monumental entre a fenomenologia e a ontologia tomista, sendo pioneira na antropologia sobre a dignidade da mulher.'
       }
     ]
@@ -178,7 +178,7 @@ export const VOCATIONS_DATA = [
         dates: '1515–1582',
         facet: 'Mestra da Oração e das Sete Moradas',
         summary: 'Reformadora do Carmelo e primeira mulher Doutora da Igreja; mapeou os graus da oração em O Castelo Interior.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Santa_Teresa_de_Jes%C3%BAs_%28Fran%C3%A7ois_G%C3%A9rard%29.jpg/440px-Santa_Teresa_de_Jes%C3%BAs_%28Fran%C3%A7ois_G%C3%A9rard%29.jpg',
+        imageUrl: '/assets/expoentes/santa-teresa-avila.jpg',
         bio: 'Reformadora do Carmelo e primeira mulher Doutora da Igreja. Em O Castelo Interior (As Moradas), mapeou com precisão inigualável os sete graus da oração interior (da meditação discursiva ao matrimônio espiritual com a Santíssima Trindade).'
       },
       {
@@ -187,7 +187,7 @@ export const VOCATIONS_DATA = [
         dates: '1542–1591',
         facet: 'O Doutor Místico',
         summary: 'Doutor Místico por excelência; sistematizou as noites escuras dos sentidos e do espírito rumo à Chama Viva.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Saint_John_of_the_Cross.jpg/440px-Saint_John_of_the_Cross.jpg',
+        imageUrl: '/assets/expoentes/sao-joao-da-cruz.jpg',
         bio: 'Frade carmelita e "Doutor Místico" por excelência. Em Subida do Monte Carmelo, Noite Escura e Chama Viva de Amor, sistematizou as purificações ativas e passivas pelas quais Deus despoja a alma de todo apego criado para transformá-la em Si por amor.'
       },
       {
@@ -196,7 +196,7 @@ export const VOCATIONS_DATA = [
         dates: '1873–1897',
         facet: 'A Pequena Via da Infância Espiritual',
         summary: 'Doutora da Igreja; revolucionou a mística cristã com a via da confiança cega e solidariedade na noite da fé.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Th%C3%A9r%C3%A8se_de_Lisieux_1896.jpg/440px-Th%C3%A9r%C3%A8se_de_Lisieux_1896.jpg',
+        imageUrl: '/assets/expoentes/santa-teresinha.jpg',
         bio: 'Monja carmelita enclausurada em Lisieux e Doutora da Igreja. Revolucionou a espiritualidade mística com a "Pequena Via": a descoberta de que a união com Deus não exige feitos extraordinários, mas o abandono filial no Amor Misericordioso.'
       },
       {
@@ -205,7 +205,7 @@ export const VOCATIONS_DATA = [
         dates: '354–430',
         facet: 'O Êxtase de Óstia',
         summary: 'Autor das Confissões; colóquio ininterrupto com a Beleza Suprema e o célebre arrebatamento místico com Santa Mônica.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Saint_Augustine_by_Antonio_Rodriguez.jpg/440px-Saint_Augustine_by_Antonio_Rodriguez.jpg',
+        imageUrl: '/assets/expoentes/santo-agostinho-mistica.jpg',
         bio: 'Frequentemente lembrado apenas como teólogo, viveu altíssima contemplação mística. Suas Confissões culminam no célebre "Êxtase de Óstia", quando tocou por um instante a Sabedoria incriada ao lado de sua mãe, Santa Mônica, dias antes de sua morte.'
       },
       {
@@ -214,7 +214,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 540–604',
         facet: 'O Doutor Contemplativo',
         summary: 'Papa beneditino que ensinou como a alma passa da purificação pelo sofrimento à fresta da luz divina.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Pope_Saint_Gregory_the_Great.jpg/440px-Pope_Saint_Gregory_the_Great.jpg',
+        imageUrl: '/assets/expoentes/sao-gregorio-magno-mistica.jpg',
         bio: 'Monge beneditino que se tornou Papa com nostalgia perpétua do silêncio do claustro. Seus Morais sobre Jó e Homilias sobre Ezequiel foram a principal fonte da teologia mística ocidental medieval, ensinando a contemplação na "fresta" da oração.'
       },
       {
@@ -223,7 +223,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 951–1003',
         facet: 'O Clamor do Coração Armênio',
         summary: 'Doutor da Igreja armênio; autor do Livro de Lamentações, colóquio inflamado do abismo humano no abismo divino.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Grigor_Narekatsi_miniature.jpg/440px-Grigor_Narekatsi_miniature.jpg',
+        imageUrl: '/assets/expoentes/sao-gregorio-narek-mistica.jpg',
         bio: 'Monge armênio e Doutor da Igreja. Seu Livro de Lamentações (Narek) é monumento da mística oriental: 95 colóquios nos quais a consciência do abismo do pecado humano se funde no abismo ainda maior da luz incriada e da misericórdia de Deus.'
       },
       {
@@ -232,7 +232,7 @@ export const VOCATIONS_DATA = [
         dates: '1347–1380',
         facet: 'A Cela Interior e o Diálogo Divino',
         summary: 'Doutora da Igreja; leiga dominicana dos estigmas invisíveis que ditou em êxtase O Diálogo da Divina Providência.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Saint_Catherine_of_Siena_by_Baldassarre_Peruzzi.jpg/440px-Saint_Catherine_of_Siena_by_Baldassarre_Peruzzi.jpg',
+        imageUrl: '/assets/expoentes/santa-catarina-sena.jpg',
         bio: 'Leiga dominicana e Doutora da Igreja. Construiu uma "cela interior" na mente, viveu o casamento místico com Cristo, recebeu os estigmas invisíveis, alimentou-se por anos apenas da Eucaristia e ditou em êxtase O Diálogo da Divina Providência.'
       },
       {
@@ -241,7 +241,7 @@ export const VOCATIONS_DATA = [
         dates: '1858–1916',
         facet: 'A Vida Oculta e Adoração no Deserto',
         summary: 'Eremita do Saara; viveu prostrado diante da Eucaristia entre os tuaregues, legando a Oração do Abandono.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Charles_de_Foucauld_1916.jpg/440px-Charles_de_Foucauld_1916.jpg',
+        imageUrl: '/assets/expoentes/sao-carlos-foucauld.jpg',
         bio: 'Ex-oficial francês que buscou a "vida oculta de Jesus em Nazaré". Viveu no deserto do Saara como eremita pobre entre os tuaregues muçulmanos, passando horas diárias prostrado diante do Santíssimo e deixando a Oração do Abandono.'
       }
     ]
@@ -276,7 +276,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 100–165',
         facet: 'O Filósofo com Manto Cristão',
         summary: 'Pioneiro da apologia cristã; demonstrou aos imperadores que as "sementes do Verbo" culminam em Cristo.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Saint_Justin_Martyr.jpg/440px-Saint_Justin_Martyr.jpg',
+        imageUrl: '/assets/expoentes/sao-justino-martir.jpg',
         bio: 'Filósofo pagão que buscou a verdade entre estoicos e platônicos até encontrar Cristo. Vestindo o manto de filósofo em Roma, escreveu Apologias aos imperadores demonstrando que todas as "sementes do Verbo" (Logos spermatikos) culminavam no Evangelho.'
       },
       {
@@ -285,7 +285,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 130–202',
         facet: 'Martelo do Gnosticismo',
         summary: 'Discípulo de Policarpo; em Contra as Heresias fundamentou a regra da fé e a sucessão apostólica.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Saint_Irenaeus_icon.jpg/440px-Saint_Irenaeus_icon.jpg',
+        imageUrl: '/assets/expoentes/santo-irineu-lyon.jpg',
         bio: 'Discípulo de São Policarpo (que fora discípulo do Apóstolo João). Em Contra as Heresias (Adversus Haereses), desmontou minuciosamente os sistemas gnósticos, estabelecendo os critérios da sucessão apostólica, da regra da fé e do cânon bíblico.'
       },
       {
@@ -294,7 +294,7 @@ export const VOCATIONS_DATA = [
         dates: '1542–1621',
         facet: 'O Erudito das Controvérsias',
         summary: 'Cardeal jesuíta e Doutor da Igreja; sistematizou a mais vasta defesa da eclesiologia e dos sacramentos.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Robert_Bellarmine_portrait.jpg/440px-Robert_Bellarmine_portrait.jpg',
+        imageUrl: '/assets/expoentes/sao-roberto-belarmino.jpg',
         bio: 'Cardeal jesuíta e Doutor da Igreja. Escreveu As Controvérsias, a mais erudita defesa da eclesiologia, do papado e da tradição católica na era pós-reforma, notável pela honestidade com que expunha os argumentos adversários antes de refutá-los.'
       },
       {
@@ -303,7 +303,7 @@ export const VOCATIONS_DATA = [
         dates: '1567–1622',
         facet: 'Apologética da Doçura',
         summary: 'Padroeiro dos Jornalistas; converteu dezenas de milhares deslizando folhetos manuscritos sob as portas.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Saint_Francis_de_Sales.jpg/440px-Saint_Francis_de_Sales.jpg',
+        imageUrl: '/assets/expoentes/sao-francisco-sales-apologetica.jpg',
         bio: 'Enviado para a região calvinista do Chablais, redigiu folhetos concisos que deslizava por baixo das portas das casas à noite. Seu estilo unia lógica irrefutável e cortesia ("pega-se mais moscas com uma colher de mel do que com um barril de vinagre").'
       },
       {
@@ -312,7 +312,7 @@ export const VOCATIONS_DATA = [
         dates: '1874–1936',
         facet: 'O Príncipe do Paradoxo',
         summary: 'Proclamado Defensor Fidei; demoliu o pessimismo materialista com humor, Ortodoxia e bom senso cristão.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/G._K._Chesterton_1906.jpg/440px-G._K._Chesterton_1906.jpg',
+        imageUrl: '/assets/expoentes/gk-chesterton.jpg',
         bio: 'Jornalista inglês proclamado Defensor Fidei pelo Papa Pio XI. Em Ortodoxia e O Homem Eterno, apresentou a fé como aventura intelectual vibrante, cheia de assombro e common sense, decisivo para a conversão de C. S. Lewis e Ronald Knox.'
       },
       {
@@ -321,7 +321,7 @@ export const VOCATIONS_DATA = [
         dates: '1895–1979',
         facet: 'O Apologeta das Comunicações de Massa',
         summary: 'Arcebispo filósofo; atraiu 30 milhões de espectadores semanais rebatendo o comunismo e o relativismo moral.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Fulton_J._Sheen_NYWTS_1952.jpg/440px-Fulton_J._Sheen_NYWTS_1952.jpg',
+        imageUrl: '/assets/expoentes/fulton-sheen.jpg',
         bio: 'Arcebispo doutor em filosofia pela Univ. de Lovaina e pioneiro da apologética nos meios de massa. Seu programa Life Is Worth Living atraía 30 milhões de espectadores semanais, rebatendo o comunismo e o cientificismo e conduzindo milhares à fé.'
       }
     ]
@@ -356,7 +356,7 @@ export const VOCATIONS_DATA = [
         dates: '329–379',
         facet: 'Fundador da Basiliade',
         summary: 'Criou a primeira "cidade da caridade" da história com hospital, leprosário e albergue em Cesareia.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Basile_de_C%C3%A9sar%C3%A9e.jpg/440px-Basile_de_C%C3%A9sar%C3%A9e.jpg',
+        imageUrl: '/assets/expoentes/sao-basilio-caritativa.jpg',
         bio: 'Vendeu sua herança na fome de 368 para alimentar a população e fundou a Basiliade: a primeira cidade da caridade contendo hospital geral, leprosário e escolas de ofícios, onde o próprio bispo cuidava pessoalmente dos leprosos.'
       },
       {
@@ -365,7 +365,7 @@ export const VOCATIONS_DATA = [
         dates: '1581–1660',
         facet: 'O Apóstolo da Caridade',
         summary: 'Revolucionou a assistência social; fundou as Filhas da Caridade que tinham "as ruas por claustro".',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Vincent_de_Paul.jpg/440px-Vincent_de_Paul.jpg',
+        imageUrl: '/assets/expoentes/sao-vicente-paulo.jpg',
         bio: 'Fundou as Confrarias da Caridade e as Filhas da Caridade (ao lado de Santa Luísa de Marillac), a primeira congregação feminina não enclausurada cujas irmãs tinham "as ruas da cidade por claustro", socorrendo órfãos e condenados às galés.'
       },
       {
@@ -374,7 +374,7 @@ export const VOCATIONS_DATA = [
         dates: '1550–1614',
         facet: 'Pioneiro das Ambulâncias e da Cruz Vermelha',
         summary: 'Instituiu o quarto voto de assistir os enfermos infectados e criou o socorro médico nos campos de batalha.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Camillus_de_Lellis_painting.jpg/440px-Camillus_de_Lellis_painting.jpg',
+        imageUrl: '/assets/expoentes/sao-camilo-lellis.jpg',
         bio: 'Ex-soldado que fundou os Camilianos, criou o primeiro serviço organizado de ambulâncias nos campos de batalha (com cruz vermelha na batina séculos antes da Cruz Vermelha) e instituiu o voto de servir os doentes mesmo com risco da própria vida.'
       },
       {
@@ -383,7 +383,7 @@ export const VOCATIONS_DATA = [
         dates: '1580–1654',
         facet: 'Escravo dos Escravos para Sempre',
         summary: 'Viveu 40 anos nos porões fétidos dos navios negreiros em Cartagena curando e defendendo escravizados.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/San_Pedro_Claver.jpg/440px-San_Pedro_Claver.jpg',
+        imageUrl: '/assets/expoentes/sao-pedro-claver.jpg',
         bio: 'Jesuíta que fez o voto perpétuo de ser "escravo dos negros para sempre". Viveu 40 anos no porto escravista de Cartagena das Índias, descendo aos porões fétidos dos navios para lavar chagas infeccionadas e defender a dignidade dos africanos.'
       },
       {
@@ -392,7 +392,7 @@ export const VOCATIONS_DATA = [
         dates: '1914–1992',
         facet: 'O Anjo Bom da Bahia',
         summary: 'Transformou um galinheiro em um dos maiores complexos hospitalares 100% gratuitos do Brasil.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Irm%C3%A3_Dulce_em_1988.jpg/440px-Irm%C3%A3_Dulce_em_1988.jpg',
+        imageUrl: '/assets/expoentes/santa-dulce-pobres.jpg',
         bio: 'Religiosa baiana que personificou a caridade operante: abrigou doentes em um galinheiro abandonado que se tornou as Obras Sociais Irmã Dulce, um dos maiores complexos de saúde filantrópicos e gratuitos do Brasil.'
       },
       {
@@ -401,7 +401,7 @@ export const VOCATIONS_DATA = [
         dates: '1910–1997',
         facet: 'O Lápis nas Mãos de Deus',
         summary: 'Fundadora das Missionárias da Caridade; recolheu moribundos nas sarjetas para que partissem em paz.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Mother_Teresa_1.jpg/440px-Mother_Teresa_1.jpg',
+        imageUrl: '/assets/expoentes/madre-teresa-calcuta.jpg',
         bio: 'Recolheu milhares de moribundos, leprosos e crianças abandonadas das calçadas da Índia para que pudessem viver e morrer com a dignidade de filhos amados de Deus, fundando as Missionárias da Caridade pelo mundo inteiro.'
       }
     ]
@@ -436,7 +436,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 5–67',
         facet: 'O Apóstolo dos Gentios',
         summary: 'Paradigma da missão cristã; percorreu milhares de quilômetros fundando comunidades do Oriente a Roma.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Saint_Paul_by_El_Greco.jpg/440px-Saint_Paul_by_El_Greco.jpg',
+        imageUrl: '/assets/expoentes/sao-paulo-apostolo.jpg',
         bio: 'O paradigma de toda vocação missionária. Cidadão romano de formação rabínica, percorreu milhares de quilômetros pela Ásia Menor, Grécia e Roma. Seu discurso no Areópago de Atenas estabeleceu o modelo clássico de anúncio querigmático e diálogo com culturas pagãs.'
       },
       {
@@ -445,7 +445,7 @@ export const VOCATIONS_DATA = [
         dates: '1506–1552',
         facet: 'Gigante do Oriente',
         summary: 'Cofundador jesuíta; evangelizou a Índia, Malásia, Molucas e foi o primeiro missionário a entrar no Japão.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Francisco_Xavier.jpg/440px-Francisco_Xavier.jpg',
+        imageUrl: '/assets/expoentes/sao-francisco-xavier.jpg',
         bio: 'Cofundador da Companhia de Jesus. Em 11 anos de missão no Oriente, percorreu a Índia, Malásia, Molucas e foi o primeiro missionário a pisar no Japão, morrendo de febre na ilha de Sanchoão, às portas da China.'
       },
       {
@@ -454,7 +454,7 @@ export const VOCATIONS_DATA = [
         dates: '1552–1610',
         facet: 'O Mandarim de Deus',
         summary: 'Mestre da inculturação; adotou os trajes confucianos e dialogou com a dinastia Ming pelo saber astronômico.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Matteo_Ricci_by_Yu_Wenhun.jpg/440px-Matteo_Ricci_by_Yu_Wenhun.jpg',
+        imageUrl: '/assets/expoentes/matteo-ricci.jpg',
         bio: 'Jesuíta que protagonizou epopeia de inculturação: adotou o traje dos mandarins confucianos, dominou o chinês clássico, introduziu a cartografia europeia na corte imperial e escreveu em chinês O Verdadeiro Sentido do Senhor do Céu.'
       },
       {
@@ -463,7 +463,7 @@ export const VOCATIONS_DATA = [
         dates: '1534–1597',
         facet: 'O Apóstolo do Brasil',
         summary: 'Escreveu a primeira gramática da língua tupi, catequizou indígenas e pacificou conflitos coloniais.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Jose_de_Anchieta.jpg/440px-Jose_de_Anchieta.jpg',
+        imageUrl: '/assets/expoentes/jose-anchieta.jpg',
         bio: 'O "Apóstolo do Brasil". Escreveu a primeira gramática da língua tupi, catequizou indígenas e colonos nas praias e selvas, compôs o célebre Poema à Virgem na areia de Ubatuba e articulou a histórica paz de Iperoig.'
       },
       {
@@ -472,7 +472,7 @@ export const VOCATIONS_DATA = [
         dates: '815–885',
         facet: 'Apóstolos dos Eslavos',
         summary: 'Criadores do alfabeto glagolítico/cirílico; traduziram a Bíblia e a liturgia para a língua dos povos eslavos.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Saints_Cyril_and_Methodius.jpg/440px-Saints_Cyril_and_Methodius.jpg',
+        imageUrl: '/assets/expoentes/cirilo-metodio.jpg',
         bio: 'Irmãos gregos e "Apóstolos dos Eslavos". Criaram o alfabeto glagolítico (origem do cirílico) para traduzir a Bíblia e os textos litúrgicos para a língua eslava, defendendo perante Roma o direito dos povos rezarem no próprio idioma.'
       }
     ]
@@ -507,7 +507,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 540–604',
         facet: 'Autor da Regra Pastoral',
         summary: 'Escreveu o manual do pastor e médico das almas que moldou o episcopado por mais de mil anos.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Saint_Gregory_the_Great_by_Jusepe_de_Ribera.jpg/440px-Saint_Gregory_the_Great_by_Jusepe_de_Ribera.jpg',
+        imageUrl: '/assets/expoentes/sao-gregorio-pastoral.jpg',
         bio: 'Seu tratado Regra Pastoral foi o manual definitivo do sacerdócio por milênios. Na obra analisa 36 pares de caracteres humanos (ricos/pobres, alegres/tristes), ensinando como o pastor deve adaptar sua palavra e remédio a cada ovelha.'
       },
       {
@@ -516,7 +516,7 @@ export const VOCATIONS_DATA = [
         dates: '1815–1888',
         facet: 'Pai e Mestre da Juventude',
         summary: 'Fundador salesiano; criou o Sistema Preventivo baseado no tripé Razão, Religião e Amabilidade.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Don_Bosco_1880.jpg/440px-Don_Bosco_1880.jpg',
+        imageUrl: '/assets/expoentes/sao-joao-bosco.jpg',
         bio: 'Recolheu órfãos e operários nas ruas de Turim. Criou o Sistema Preventivo, método pedagógico baseado exclusivamente em Razão, Religião e Amabilidade (Amorevolezza), rejeitando castigos corporais e formando cidadãos íntegros.'
       },
       {
@@ -525,7 +525,7 @@ export const VOCATIONS_DATA = [
         dates: '1786–1859',
         facet: 'Padroeiro Universal dos Párocos',
         summary: 'Atendia penitentes no confessionário por 18 horas diárias, convertendo toda a França a partir de Ars.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Jean_Marie_Vianney.jpg/440px-Jean_Marie_Vianney.jpg',
+        imageUrl: '/assets/expoentes/cura-dars.jpg',
         bio: 'Padroeiro dos Párocos. Tendo grande dificuldade inicial nos estudos de latim, transformou a descristianizada aldeia de Ars pelo confessionário, onde atendia peregrinos vindos de toda a Europa por até 18 horas diárias.'
       },
       {
@@ -534,7 +534,7 @@ export const VOCATIONS_DATA = [
         dates: '1538–1584',
         facet: 'O Pastor do Concílio de Trento',
         summary: 'Criou os seminários modernos, coordenou o Catecismo Romano e socorreu Milão durante a peste.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Carlo_Borromeo.jpg/440px-Carlo_Borromeo.jpg',
+        imageUrl: '/assets/expoentes/sao-carlos-borromeu-pastoral.jpg',
         bio: 'Arcebispo de Milão e executor de Trento. Fundou os primeiros seminários diocesanos modernos, coordenou o Catecismo Romano, criou escolas dominicais para 40 mil crianças pobres e socorreu famintos descalço na peste de 1576.'
       },
       {
@@ -543,7 +543,7 @@ export const VOCATIONS_DATA = [
         dates: '1515–1595',
         facet: 'O Santo da Alegria',
         summary: 'O Apóstolo de Roma; renovou a vida católica pelo diálogo descontraído, amizade e o Oratório.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Philip_Neri.jpg/440px-Philip_Neri.jpg',
+        imageUrl: '/assets/expoentes/sao-filipe-neri.jpg',
         bio: 'O "Apóstolo de Roma". Começou reunindo jovens leigos em um quarto para ler vidas de santos, conversar com simplicidade e cantar. Fundou o Oratório, transformando a cidade pela amizade espiritual, confessionário e alegria santa.'
       },
       {
@@ -552,7 +552,7 @@ export const VOCATIONS_DATA = [
         dates: '1651–1719',
         facet: 'Padroeiro dos Educadores',
         summary: 'Fundou os Irmãos das Escolas Cristãs e as primeiras escolas normais de formação de professores.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Saint_John_Baptist_de_La_Salle.jpg/440px-Saint_John_Baptist_de_La_Salle.jpg',
+        imageUrl: '/assets/expoentes/sao-joao-batista-la-salle.jpg',
         bio: 'Fundou os Irmãos das Escolas Cristãs, criou as primeiras escolas normais de professores, substituiu o ensino individual em latim pelo ensino simultâneo em salas no idioma materno e foi proclamado Padroeiro dos Educadores.'
       }
     ]
@@ -587,7 +587,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 1395–1455',
         facet: 'Padroeiro dos Artistas Católicos',
         summary: 'Frade dominicano que nunca pintou um crucifixo sem chorar; autor dos afrescos de São Marcos.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fra_Angelico_portrait.jpg/440px-Fra_Angelico_portrait.jpg',
+        imageUrl: '/assets/expoentes/fra-angelico.jpg',
         bio: 'Frade dominicano florentino e Padroeiro dos Artistas. Nunca pintava um crucifixo sem derramar lágrimas e considerava cada pincelada oração; seus afrescos no Convento de São Marcos foram feitos especificamente para a contemplação.'
       },
       {
@@ -596,7 +596,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 1360–1430',
         facet: 'O Cume da Iconografia Oriental',
         summary: 'Monge pintor russo autor do célebre Ícone da Santíssima Trindade (a hospitalidade de Abraão).',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Andrei_Rublev_by_unknown_artist.jpg/440px-Andrei_Rublev_by_unknown_artist.jpg',
+        imageUrl: '/assets/expoentes/andrei-rublev.jpg',
         bio: 'Monge e o maior iconógrafo da história russa. Pintou o célebre Ícone da Santíssima Trindade (a hospitalidade de Abraão), considerada a mais perfeita e sublime tradução visual do dogma trinitário já realizada pelo engenho humano.'
       },
       {
@@ -605,7 +605,7 @@ export const VOCATIONS_DATA = [
         dates: '1265–1321',
         facet: 'O Poeta Supremo da Cristandade',
         summary: 'Autor da Divina Comédia; transformou a teologia tomista e a mística de Claraval em versos imortais.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Dante_Alighieri_by_Giotto.jpg/440px-Dante_Alighieri_by_Giotto.jpg',
+        imageUrl: '/assets/expoentes/dante-alighieri.jpg',
         bio: 'Leigo florentino franciscano. Sua Divina Comédia é uma "Suma Teológica em versos" onde a filosofia de Tomás de Aquino e a mística de São Bernardo tornam-se uma jornada épica em terza rima do Inferno ao Paraíso.'
       },
       {
@@ -614,7 +614,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 1525–1594',
         facet: 'O Príncipe da Música Sacra',
         summary: 'Mestre da polifonia renascentista; uniu a mais alta beleza harmônica à perfeita clareza litúrgica.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Giovanni_Pierluigi_da_Palestrina.jpg/440px-Giovanni_Pierluigi_da_Palestrina.jpg',
+        imageUrl: '/assets/expoentes/palestrina.jpg',
         bio: 'Mestre de capela em Roma. Autor da Missa do Papa Marcelo, demonstrou no Concílio de Trento que a polifonia polifônica a várias vozes podia aliar beleza musical e absoluta reverência e clareza do texto sagrado.'
       },
       {
@@ -623,7 +623,7 @@ export const VOCATIONS_DATA = [
         dates: '1852–1926',
         facet: 'O Arquiteto de Deus',
         summary: 'Dedicou a vida ao Templo Expiatório da Sagrada Família, concebido como uma grande Bíblia de pedra.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Antoni_Gaudi_1878.jpg/440px-Antoni_Gaudi_1878.jpg',
+        imageUrl: '/assets/expoentes/antoni-gaudi.jpg',
         bio: 'Arquiteto catalão que viveu em extrema pobreza e oração eucarística, dedicando-se inteiramente à Sagrada Família em Barcelona — concebida como uma "Bíblia de pedra" onde cada fachada proclama a criação e a glória de Deus.'
       },
       {
@@ -632,7 +632,7 @@ export const VOCATIONS_DATA = [
         dates: 'c. 1081–1151',
         facet: 'O Mentor da Arquitetura Gótica',
         summary: 'Reconstruiu a Basílica de Saint-Denis criando a teologia da luz através de ogivas e vitrais monumentais.',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Abbot_Suger.jpg/440px-Abbot_Suger.jpg',
+        imageUrl: '/assets/expoentes/abade-suger.jpg',
         bio: 'Monge beneditino mentor teológico da arquitetura gótica. Ao reconstruir Saint-Denis com ogivas e vitrais, aplicou a teologia da luz (lux nova) do Pseudo-Dionísio para elevar a mente dos fiéis das realidades materiais às celestiais.'
       }
     ]
