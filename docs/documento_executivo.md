@@ -6,11 +6,12 @@
 | Metadado | Informação |
 | :--- | :--- |
 | **Projeto** | Fides et Ratio (Fé e Razão) |
-| **Status do Documento** | 🟢 **APROVADO / EM IMPLEMENTAÇÃO** |
-| **Versão** | 0.2.0 |
+| **Status do Documento** | 🟢 **DEFINITIVO / HOMOLOGADO EM PRODUÇÃO** |
+| **Versão** | 1.0.0 (Definitivo) |
 | **Data de Criação** | 08 de Outubro de 2026 |
+| **Última Atualização** | 21 de Outubro de 2026 |
 | **Responsável Executivo** | zrhyan & Antigravity |
-| **Ambiente de Hospedagem Alvo** | GitHub + Netlify (deploy contínuo gratuito) |
+| **Ambiente de Hospedagem Alvo** | GitHub + Netlify + Supabase (Mobile-First) |
 
 ---
 
@@ -144,8 +145,9 @@ graph TD
 ---
 
 ## 5. Arquitetura Técnica e Decisões Consolidadas
-
-1. **Frontend:** **Vite + React (com TypeScript/JavaScript moderno) + Tailwind CSS** (definido e aprovado pelo usuário).
-2. **Backend & Banco de Dados:** **Supabase** (PostgreSQL gratuito, real-time, client leve via `@supabase/supabase-js`, com camada de fallback inteligente para armazenamento local se as chaves da API ainda não forem configuradas).
-3. **Segurança do Administrador:** PIN Mestre de Acesso (padrão: `veritas`, alterável nas configurações).
-4. **Conteúdo do Quiz (Encontro 1):** Estrutura pré-carregada e pronta; na fase de consolidação do conteúdo, o usuário fornecerá as perguntas definitivas redigidas pela equipe.
+1. **Frontend:** **Vite 5 + React 18 + Tailwind CSS v4** integrado nativamente, com tipografia litúrgica (Cinzel, Cormorant Garamond, Inter) e componentes formatadores de silogismo (`FormattedText.jsx`).
+2. **Backend & Banco de Dados:** **Supabase** (PostgreSQL em produção na região de São Paulo, tabelas `attempts` e `fides_settings`, sincronização em tempo real com fallback automático e transparente para `localStorage`).
+3. **Segurança do Administrador:** PIN Mestre de Acesso sincronizado globalmente na nuvem via tabela `fides_settings` (com proteção por modal assíncrono).
+4. **Conteúdo Oficial do Quiz (Encontro 1):** 30 questões de alta dificuldade homologadas, estruturadas rigorosamente conforme a apostila oficial (*Resumo Parte 1*), com 4 alternativas balanceadas por questão e justificativas pedagógicas detalhadas para todas as opções (acerto e distratores).
+5. **Ergonomia e Usabilidade Mobile (Fase 1 Concluída):** Formatação de silogismos (selos P1/P2/C), alvos de toque aumentados (44–48px), layout responsivo até 320px, scroll automático até feedbacks, isolamento de impressão `@media print` para certificados e prevenção de auto-zoom em navegadores iOS.
+6. **Hospedagem e CI/CD:** Deploy contínuo ativo via **Netlify** vinculado ao repositório GitHub `zRhyan/FidesEtRatio`.

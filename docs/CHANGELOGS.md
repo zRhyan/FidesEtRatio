@@ -6,9 +6,9 @@
 | Metadado | Informação |
 | :--- | :--- |
 | **Projeto** | Fides et Ratio (Fé e Razão) |
-| **Data do Registro** | 09 de Outubro de 2026 |
-| **Versão Atual** | v1.0.0 (Release Oficial de Produção) |
-| **Status Geral** | 🟢 **Sistema 100% Completo, Integrado e em Produção** |
+| **Data do Registro** | 21 de Outubro de 2026 |
+| **Versão Atual** | v1.2.0 (Supabase Keep-Alive & Usabilidade Mobile) |
+| **Status Geral** | 🟢 **Sistema Completo em Produção & Fase 1 de Usabilidade Concluída** |
 | **Ambiente Alvo** | GitHub + Netlify + Supabase (Mobile-First) |
 
 ---
@@ -99,6 +99,13 @@
   - As funções `getAdminPin()`, `setAdminPin()` e `verifyAdminPin()` em `src/services/storage.js` foram tornadas assíncronas, consultando o Supabase com fallback transparente para o `localStorage`.
   - Quando o catequista atualiza o PIN no painel de administração em um navegador, a nova senha é propagada instantaneamente para todos os dispositivos, abas anônimas e celulares.
   - Interface do modal de login (`AdminLoginModal.jsx`) e do painel (`AdminPanel.jsx`) atualizadas com feedback de carregamento (*"Verificando..."* / *"Salvando..."*).
+
+### 1.10 Rotina Automatizada de Keep-Alive para o Supabase (`v1.2.0`)
+- [x] **Prevenção de Pausa por Inatividade no Plano Gratuito:**
+  - Criação do workflow agendado [`.github/workflows/supabase-keep-alive.yml`](../.github/workflows/supabase-keep-alive.yml).
+  - Execução programada **2 vezes por semana** (toda segunda e quinta-feira às 12:00 UTC / 09:00 BRT via cron `0 12 * * 1,4`), mantendo intervalo máximo de 4 dias entre pings (muito abaixo do teto de 7 dias do Supabase).
+  - Consulta leve via `curl` no endpoint PostgREST (`GET /rest/v1/fides_settings?select=key&limit=1`), registrando atividade real no PostgreSQL para resetar o temporizador de inatividade.
+  - Suporte a acionamento manual imediato (`workflow_dispatch`) e integração com os secrets `SUPABASE_URL` e `SUPABASE_ANON_KEY`.
 
 ---
 

@@ -1,0 +1,45 @@
+name: Supabase Keep-Alive Heartbeat
+
+on:
+  schedule:
+    # Executa 2 vezes por semana: Segunda e Quinta-feira às 12:00 UTC (09:00 BRT)
+    # Garante intervalo máximo de 4 dias, bem abaixo da janela de 7 dias de inatividade do Supabase.
+    - cron: '0 12 * * 1,4'
+  workflow_dispatch: # Permite disparo manual imediato via botão "Run workflow" no GitHub
+
+jobs:
+  ping-supabase:
+    name: Ping Supabase Database
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Executar consulta keep-alive no PostgreSQL do Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "::error::Variáveis de ambiente ausentes. Configure SUPABASE_URL e SUPABASE_ANON_KEY nos Secrets do GitHub."
+            exit 1
+          fi
+
+          # Remove barra final da URL se houver
+          BASE_URL="${SUPABASE_URL%/}"
+
+          echo "Disparando consulta keep-alive para ${BASE_URL}..."
+
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${BASE_URL}/rest/v1/fides_settings?select=key&limit=1" \
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}" \
+            -H "User-Agent: GitHub-Actions-KeepAlive/1.0")
+
+          echo "Código HTTP retornado: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✅ Sucesso! O banco de dados Supabase respondeu com HTTP $HTTP_STATUS. Temporizador de inatividade reiniciado."
+          else
+            echo "::error::Falha ao comunicar com o Supabase. Código retornado: $HTTP_STATUS. Se o banco já estiver pausado, será necessário reativá-lo pelo painel (Resume)."
+            exit 1
+          fi
