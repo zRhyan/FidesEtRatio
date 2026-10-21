@@ -1,179 +1,98 @@
-# CHANGELOGS - Projeto Fides et Ratio
-> **Registro Histórico de Implementações, Arquitetura e Próximos Passos**
+# CHANGELOGS - Fides et Ratio
+
+Registro cronológico inverso de versões, modificações implementadas e marcos do projeto.
 
 ---
 
-| Metadado | Informação |
-| :--- | :--- |
-| **Projeto** | Fides et Ratio (Fé e Razão) |
-| **Data do Registro** | 21 de Outubro de 2026 |
-| **Versão Atual** | v1.4.0 (Sistema de Gamificação Sacra, Vocações e Progressão RPG) |
-| **Status Geral** | 🟢 **Sistema Completo com Gamificação Sacra & 7 Vocações em Produção** |
-| **Ambiente Alvo** | GitHub + Netlify + Supabase (Mobile-First) |
+## [v1.4.1] - 21/10/2026
+### Sincronização Bidirecional e Auto-Upload em Nuvem
+- **Auto-Upload de Cache Local:** Quando um dispositivo possui perfil com progresso local (ex: Nível 2) e a nuvem ainda não possui o registro, o sistema realiza o upload automático e silencioso para a tabela `user_profiles` no Supabase.
+- **Sincronização de Tentativas da Nuvem (`syncUserAttemptsFromCloud`):** Ao identificar o usuário em qualquer aparelho, o sistema baixa as tentativas salvas no Supabase (`attempts`) e atualiza o `localStorage`, garantindo que certificados e histórico de 100% apareçam em todos os dispositivos.
+- **Busca Insensível a Maiúsculas/Minúsculas (`ilike`):** Consultas ao Supabase normalizadas para evitar divergência de cadastro entre diferentes teclados e aparelhos (ex: `Rhyan` vs `rhyan`).
+- **Garantia de Não-Regressão de XP:** Verificação de consistência que impede que o perfil em nuvem ou local fique com nível/XP inferior ao comprovado pelo histórico de tentativas do catequizando.
 
 ---
 
-## 1. Implementações Já Concluídas
-
-### 1.1 Documentação e Metodologia Ágil (Scrum)
-- [x] **Documento Executivo Completo (`docs/documento_executivo.md`):**
-  - Levantamento e detalhamento de todas as Histórias de Usuário do Aluno (US01 a US06) e do Administrador/Catequista (US07 e US08).
-  - Definição dos Requisitos Não-Funcionais (estética sacra medieval, mobile-first, performance e persistência de dados).
-  - Modelagem do banco de dados relacional (entidades `Usuario`, `Quiz`, `Pergunta`, `Alternativa`, `Tentativa_Quiz`).
-
-### 1.2 Setup e Arquitetura do Projeto
-- [x] **Stack Tecnológica Moderna:**
-  - Inicialização com **Vite 5** e **React 18**.
-  - Configuração do **Tailwind CSS v4** integrado nativamente ao build do Vite (`@tailwindcss/vite`).
-  - Instalação e integração de ícones sagrados/litúrgicos com **Lucide-React**.
-  - Biblioteca **Canvas-Confetti** para animação comemorativa dos 100%.
-  - Cliente oficial **@supabase/supabase-js** para suporte a banco de dados em nuvem.
-
-### 1.3 Identidade Visual Sacra Medieval
-- [x] **Artes Clássicas Geradas Exclusivamente:**
-  - **Banner Hero (`public/images/fides_hero.jpg`):** Pintura a óleo barroca/renascentista retratando Santo Agostinho e São Tomás de Aquino no scriptorium monástico estudando o manuscrito iluminado *Fides et Ratio*.
-  - **Selo Sacro (`public/images/fides_seal.jpg` e `public/favicon.jpg`):** Selo pontifício/acadêmico em cera e ouro iluminado com o lema *Fides et Ratio*, cruz e livro sagrado da sabedoria.
-- [x] **Tipografia & Design System:**
-  - Fontes clássicas do Google Fonts: **Cinzel**, **Cinzel Decorative**, **Cormorant Garamond** (serifada escolástica) e **Inter** (leitura mobile).
-  - Paleta litúrgica medieval: pergaminho nobre (`#0d0c0a` / `#161410`), ouro sacramental (`#c5a059`), vinho carmesim (`#7c1a2d`), azul lápis-lazúli (`#16263d`).
-  - Bordas iluminadas e efeitos de manuscrito medieval (`border-gold-glow`, `parchment-card`).
-
-### 1.4 Banco de Dados & Camada de Persistência (`src/services/storage.js`)
-- [x] **Sincronização Híbrida (Nuvem + Local):**
-  - Suporte completo ao **Supabase** (PostgreSQL em nuvem) para que as notas de múltiplos celulares sejam visíveis no painel do catequista em tempo real.
-  - Fallback automático e transparente para **LocalStorage** (o app funciona 100% offline mesmo sem configurar nuvem).
-- [x] **Regra de Negócio de Nota Mais Alta (High Score):**
-  - Implementação estrita da regra solicitada: a nota mais alta histórica do aluno é sempre retida. Se ele obtiver 100% na primeira tentativa e depois fizer outra com 80%, o sistema preserva os 100% para o certificado e liberação para a próxima aula.
-
-### 1.5 Módulo de Perguntas e Explicações Pedagógicas (`src/data/defaultQuizzes.js`)
-- [x] **Quiz Modelo do Encontro 1:**
-  - Perguntas ricas sobre Fé e Razão, o erro do Fideísmo, a Suma Teológica de São Tomás de Aquino, as vias do movimento/causalidade e Santo Agostinho (*Crede ut intelligas*).
-  - **Explicação individualizada por alternativa:** cada opção (seja a correta ou cada uma das incorretas) possui sua justificativa pedagógica e teológica já cadastrada.
-
-### 1.6 Componentes da Interface (UI/UX)
-- [x] **`Header.jsx`:** Barra de navegação com o selo iluminado, identificação do catequizando logado, contagem de módulos concluídos e botão de acesso ao modo Catequista.
-- [x] **`UserModal.jsx`:** Fluxo de identificação descomplicado por nome, sem senha, com suporte a seleção de usuários recentes do aparelho.
-- [x] **`QuizList.jsx`:** Tela inicial com o banner de Santo Tomás e Santo Agostinho, lista de módulos com badges de aprovação, estatísticas de acerto e botão de início.
-- [x] **`QuizPlayer.jsx` (Experiência do Quiz):**
-  - Barra de progresso visual fluida e indicador "Questão X de Y".
-  - Feedback imediato: ao clicar numa alternativa, ela se ilumina (verde para acerto, rubro para erro) e as opções travam.
-  - Card pedagógico explicativo renderizado imediatamente abaixo, detalhando o porquê do acerto ou o fundamento do erro.
-  - Botão de avançar para a próxima questão ou concluir.
-- [x] **`QuizResult.jsx` (Tela Final & Revisão de Erros):**
-  - Efeito de confetes e parabéns para aproveitamento de 100%.
-  - Resumo de acertos, erros e porcentagem.
-  - **Botão "Refazer Quiz"** para tentar alcançar 100% imediatamente (US06).
-  - **Botão e Sanfona "Revisar Questões Erradas" (US05):** lista todas as questões erradas, exibindo a alternativa que o estudante marcou com o motivo do erro, e a alternativa correta com sua explicação doutrinária.
-- [x] **`AdminPanel.jsx` (Painel do Catequista):**
-  - **Aba de Alunos (US08):** Tabela consolidada de todos os participantes com nota máxima histórica, status "Apto p/ Aula 2 (100%)", total de tentativas e busca por nome.
-  - **Aba de Gestão de Quizzes (US07):** Criação e edição dinâmica de quizzes, permitindo adicionar perguntas, alternativas e as explicações de erro/acerto de cada opção.
-  - **Aba de Configurações:** Configuração direta de URL/Chave do Supabase, script SQL pronto e alteração do PIN do administrador.
-- [x] **`AdminLoginModal.jsx`:** Proteção do painel de administração via PIN mestre (padrão: `veritas`).
-- [x] **`CertificateModal.jsx`:** Certificado sacro medieval iluminado para os estudantes aprovados com 100%, pronto para impressão ou exportação em PDF.
-- [x] **`App.jsx`:** Gerenciamento central de estados e transições de tela.
-
-### 1.7 Banco de Questões Oficiais do Encontro 1 (`src/data/defaultQuizzes.js`) — v0.4.0
-- [x] **30 Questões Oficiais Rigorosamente Estruturadas:**
-  - **Q1 a Q2 (Identidade & Missão):** Projeto Fides et Ratio (3 pilares: 1 Pd 3,15, Mc 16,15 e combate ao fideísmo oportunista) e etimologia/significado de Evangelizar (*euangelion*).
-  - **Q3 a Q5 (Propedêutica Lógica):** Definição formal de argumento $\langle\Gamma, \psi\rangle$, argumento válido e argumento correto/sólido (*sound*).
-  - **Q6 a Q8 (Prática Lógica):** Avaliação de argumentos reais (Jack/cachorros amarelos = válido não sólido; Maria/orelhas = inválido; Capitais brasileiras = válido e sólido).
-  - **Q9 a Q12 (Tipos de Inferência):** Dedução (necessidade lógica), indução (projeção provável), abdução (inferência para a melhor explicação) e exercício prático do evento da chuva/asfalto molhado.
-  - **Q13 a Q16 (Argumento do Ajuste Fino):** Natureza abdutiva, os 4 dados físicos (ressonância de Hoyle do Carbono-12, inflação primordial $10^{-5}$, constante cosmológica $\Lambda$, baixa entropia de Penrose $10^{10^{123}}$), o quarteto de hipóteses (Acaso, Necessidade, Multiverso, Inteligência Superior) e a conclusão abdutiva irrefutável.
-  - **Q17 (Contingência de Leibniz):** Princípio da Razão Suficiente e a necessidade ontológica de uma Causa Primeira Necessária (Deus).
-  - **Q18 a Q20 (Argumento Moral Metaético):** Estrutura silogística ontológica, refutação do desacordo cultural e da objeção evolutiva, resposta a Wielenberg e superação do Dilema de Eutífron pela Simplicidade Divina.
-  - **Q21 a Q23 (Confiabilidade Histórica & Profecias):** Prova de antecedência (Septuaginta LXX e Qumran), prova de preservação (>5.800 manuscritos gregos), fontes pagãs/seculares (Tácito, Plínio o Jovem, Luciano) e encaixe profético milenar (Salmo 22, Isaías 53, Zacarias 12).
-  - **Q24 a Q27 (Psicologia dos Mártires & Fatos Mínimos):** Descarte da fraude/mentira (porta de saída romana, reversão de Pedro, Tiago cético), descarte da alucinação coletiva, critério do constrangimento (mulheres no sepulcro), atestação inimiga (desculpa do roubo) e conversões abruptas (Paulo e Tiago).
-  - **Q28 a Q30 (Trilema de Cristo & Síntese Final):** Trilema de Lewis-Chesterton (Mentiroso, Lunático ou Senhor), descarte de loucura ou farsa, e síntese de *Fides et Ratio* (as duas asas da Verdade).
-- [x] **Explicação Individualizada Completa:** Cada alternativa (tanto a correta quanto os distratores) conta com justificativa pedagógica e doutrinária personalizada.
-- [x] **Mecanismo de Auto-Atualização de Cache:** `src/services/storage.js` atualizado para sincronizar automaticamente os clientes que já possuíam a versão de teste de 5 questões em cache.
-
-### 1.8 Calibração de Alta Dificuldade & Balanceamento das Questões (`v0.5.0` - `quiz v2.0.0`)
-- [x] **Distratores Ricos e Sofisticados:** Reformulação completa de todas as alternativas incorretas em todas as 30 perguntas. Os distratores deixaram de ser frases curtas e caricaturais para se tornarem argumentos densos, eruditos e sedutores (incorporando erros clássicos do pensamento como voluntarismo de Ockham, racionalismo cartesiano estrito, cientificismo materialista, relativismo pós-moderno, e fideísmo pietista).
-- [x] **Homogeneização de Extensão (Eliminação de Dicas Visuais):** O tamanho e o grau de detalhe de todas as 4 alternativas em cada questão foram equalizados (todas com extensão equilibrada entre 180 e 280 caracteres), impossibilitando identificar a resposta certa apenas por ser "a mais longa".
-- [x] **Distribuição Aleatória das Alternativas Corretas:** As respostas certas foram redistribuídas de forma equilibrada entre as posições A, B, C e D (eliminando o padrão onde a primeira opção era sempre a correta).
-- [x] **Sincronização Automática por Versão (`v2.0.0-alta-dificuldade`):** A camada de persistência agora compara o campo `version` do quiz para substituir imediatamente o cache do navegador sem necessidade de limpeza manual.
-
-### 1.9 Sincronização em Nuvem do PIN Mestre do Administrador (`v0.6.0`)
-- [x] **Persistência Global de Configurações no Supabase:**
-  - Criação da tabela `fides_settings` para armazenar parâmetros globais compartilhados (incluindo `admin_pin`).
-  - As funções `getAdminPin()`, `setAdminPin()` e `verifyAdminPin()` em `src/services/storage.js` foram tornadas assíncronas, consultando o Supabase com fallback transparente para o `localStorage`.
-  - Quando o catequista atualiza o PIN no painel de administração em um navegador, a nova senha é propagada instantaneamente para todos os dispositivos, abas anônimas e celulares.
-  - Interface do modal de login (`AdminLoginModal.jsx`) e do painel (`AdminPanel.jsx`) atualizadas com feedback de carregamento (*"Verificando..."* / *"Salvando..."*).
-
-### 1.10 Rotina Automatizada de Keep-Alive para o Supabase (`v1.2.0`)
-- [x] **Prevenção de Pausa por Inatividade no Plano Gratuito:**
-  - Criação do workflow agendado [`.github/workflows/supabase-keep-alive.yml`](../.github/workflows/supabase-keep-alive.yml).
-  - Execução programada **2 vezes por semana** (toda segunda e quinta-feira às 12:00 UTC / 09:00 BRT via cron `0 12 * * 1,4`), mantendo intervalo máximo de 4 dias entre pings (muito abaixo do teto de 7 dias do Supabase).
-  - Consulta leve via `curl` no endpoint PostgREST (`GET /rest/v1/fides_settings?select=key&limit=1`), registrando atividade real no PostgreSQL para resetar o temporizador de inatividade.
-  - Suporte a acionamento manual imediato (`workflow_dispatch`) e integração com os secrets `SUPABASE_URL` e `SUPABASE_ANON_KEY`.
-
-### 1.11 Marcador de Acertos e Erros em Tempo Real durante o Quiz (`v1.3.0`)
-- [x] **Feedback Contínuo de Desempenho (`src/components/QuizPlayer.jsx`):**
-  - Adição de marcador compacto no cabeçalho de navegação do quiz com contagem acumulada em tempo real.
-  - Símbolo de "check" em verde esmeralda com o total de acertos (`Check` do Lucide) e símbolo "x" em vermelho rubro com o total de erros (`X` do Lucide).
-  - Design harmonizado com a estética sacra medieval/pergaminho e totalmente responsivo para dispositivos móveis.
-
-### 1.12 Sistema de Gamificação Sacra, 7 Vocações da Igreja e Progressão RPG (`v1.4.0`)
-- [x] **Documento Executivo & Arquitetura (`docs/documento_executivo_gamificacao_rpg.md`):**
-  - Levantamento completo da mecânica das 7 Vocações, fórmulas de XP, escada de níveis e regras de herança.
-- [x] **Catálogo das 7 Vocações & Galeria de Expoentes (`src/data/vocationsData.js`):**
-  - Vocações: *Intelectual*, *Mística*, *Apologética*, *Caritativa*, *Missionária*, *Pastoral* e *Artística*.
-  - Escala de 7 graus/níveis de ascensão histórica por vocação (ex: *Ouvinte dos Preâmbulos* até *Doutor da Igreja* / *Doutor Místico* / *Artífice do Templo de Deus*).
-  - Todos os santos e expoentes com pinturas e fotografias históricas em domínio público, axiomas doutrinários e biografias pedagógicas aprofundadas.
-  - **Imagens Locais Autônomas (`public/assets/expoentes/` e `src/assets/expoentes/`):** Todos os 50 retratos e pinturas clássicas baixados localmente para independência total de servidores externos e suporte offline irrestrito.
-- [x] **Motor de Gamificação e Persistência Híbrida (`src/services/storage.js`):**
-  - **Calibração de XP:** 100% dos 4 módulos oficiais (4 × 9.000 XP = 36.000 XP) eleva o catequizando exatamente ao Nível 4; níveis 5 a 7 (até 130.000 XP) incentivam repetição e estudo contínuo.
-  - **Multiplicador de 3.0x:** Primeira conclusão com 100% de acerto concede bônus de 3.0x sobre as questões.
-  - **Prática Subsequente:** Repetições após os 100% concedem o XP base das questões acertadas (sem o multiplicador 3.0x).
-  - **Regra Estrita de Abandono:** Sair do quiz antes da tela final resulta em 0 XP (não há crédito parcial).
-  - **Herança Sagrada (1/7):** Ao migrar para uma vocação inédita, o usuário herda 1/7 do maior XP histórico. Ao retornar a uma vocação visitada, retoma seu progresso original intacto.
-  - **Retroatividade Total:** Catequizandos com histórico anterior em `attempts` recebem automaticamente o XP retroativo creditado na vocação padrão (*Intelectual*).
-  - Persistência sincronizada com a tabela `user_profiles` no Supabase e fallback transparente em `localStorage`.
-- [x] **Componentes e Experiência do Usuário (UI/UX):**
-  - **`Header.jsx`:** Badge da vocação com ícone litúrgico, nível atual, mini barra de progresso dourada e toque rápido para seleção de vocação.
-  - **`VocationModal.jsx` & `SaintDetailModal.jsx`:** Modal nobre com seleção entre as 7 vocações, visualização da escada de ascensão, prévia da herança de XP e galeria de expoentes com modais biográficos.
-  - **`QuizPlayer.jsx`:** Diálogo de confirmação de saída alertando claramente sobre o descarte do XP em caso de abandono.
-  - **`QuizResult.jsx`:** Card dourado de XP ganho, badge comemorativo 3.0x de maestria e banner comemorativo de *LEVEL UP* com chuva de confetes sacros.
-  - **`AdminPanel.jsx`:** Tabela e cards mobile de alunos enriquecidos com vocação ativa, grau e XP acumulado; editor de quizzes com campo personalizável de `xpReward` por questão (padrão 100 XP).
+## [v1.4.0] - 21/10/2026
+### Sistema de Gamificação Sacra, 7 Vocações e Progressão RPG
+- **Catálogo das 7 Vocações da Igreja (`src/data/vocationsData.js`):** Implementação das vocações *Intelectual*, *Mística*, *Apologética*, *Caritativa*, *Missionária*, *Pastoral* e *Artística*, cada uma com axioma, oração patronal e escala de 7 graus/níveis de ascensão histórica.
+- **Imagens Locais Autônomas dos 50 Expoentes:** Download de retratos e pinturas clássicas em domínio público de todos os 50 santos e pensadores para `public/assets/expoentes/` e `src/assets/expoentes/`, assegurando funcionamento offline irrestrito e eliminação de dependências externas.
+- **Motor de Gamificação & Calibração de XP (`src/services/storage.js`):**
+  - Conclusão de 100% dos 4 módulos oficiais (4 × 9.000 XP = 36.000 XP) atinge exatamente o Nível 4; níveis 5 a 7 (até 130.000 XP) incentivam repetição e estudo contínuo.
+  - Multiplicador de **3.0x** concedido exclusivamente na primeira conclusão de um quiz com 100% de acerto.
+  - Repetições de estudo concedem XP base pelas questões acertadas (sem o bônus de 3.0x).
+  - Regra estrita de abandono: sair antes da conclusão descarta o XP acumulado na sessão.
+  - Herança Sagrada: migração para uma vocação inédita herda 1/7 do maior XP histórico; retorno a uma vocação visitada restaura o progresso intacto.
+  - Crédito retroativo de XP automático para usuários com tentativas pré-existentes.
+  - Tabela `user_profiles` no Supabase com sincronização híbrida e fallback em `localStorage`.
+- **Novos Componentes e Experiência do Usuário (UI/UX):**
+  - `Header.jsx`: Badge dinâmico da vocação ativa com ícone litúrgico, nível atual e mini barra de progresso dourada com acesso rápido.
+  - `VocationModal.jsx` & `SaintDetailModal.jsx`: Modal de navegação pelas 7 vocações, visualização da escada de níveis, prévia da herança e galeria de expoentes com modais biográficos aprofundados.
+  - `QuizPlayer.jsx`: Modal de confirmação de saída com aviso explícito de perda de XP.
+  - `QuizResult.jsx`: Card de XP conquistado, selo de maestria 3.0x e celebração animada de *LEVEL UP* com chuva de confetes sacros.
+  - `AdminPanel.jsx`: Tabela desktop e cards mobile de alunos enriquecidos com vocação ativa, grau e XP acumulado; editor de quizzes com campo de recompensa personalizável de XP por pergunta (`xpReward`, padrão 100 XP).
+- **Documentação de Arquitetura:** Criação do documento executivo [`docs/documento_executivo_gamificacao_rpg.md`](./documento_executivo_gamificacao_rpg.md).
 
 ---
 
-## 2. Status do Roadmap & Entregas
-*Todas as metas do projeto foram alcançadas com êxito:*
-
-| Item | Descrição | Status | Detalhes |
-| :--- | :--- | :---: | :--- |
-| **1. Conexão do Projeto Supabase** | Projeto criado em São Paulo, tabelas `attempts` e `fides_settings` configuradas. | ✅ Concluído | Conectado via Netlify Env Vars e sincronizando em tempo real |
-| **2. Repositório Git Local** | Inicialização do branch `main`, configuração de `.gitignore` e commits estruturados. | ✅ Concluído | Histórico preservado na branch `main` |
-| **3. Repositório Remoto no GitHub** | Repositório `zRhyan/FidesEtRatio` conectado e sincronizado. | ✅ Concluído | [github.com/zRhyan/FidesEtRatio](https://github.com/zRhyan/FidesEtRatio) |
-| **4. Deploy no Netlify** | Aplicação publicada e acessível publicamente via Netlify com CI/CD. | ✅ Concluído | Site no ar com build automatizado |
+## [v1.3.0] - 21/10/2026
+### Marcador de Acertos e Erros em Tempo Real no Quiz
+- **Feedback Contínuo de Desempenho (`src/components/QuizPlayer.jsx`):** Adição de marcador compacto no cabeçalho durante a resolução do quiz, exibindo a contagem acumulada de acertos em verde esmeralda (`Check`) e de erros em vermelho rubro (`X`).
 
 ---
 
-## 3. Conclusão da Entrega Central
-> 🏆 **Sistema 100% Completo, Integrado e Operacional!**
-> 
-> * **Interface:** Estética sacra medieval imersiva, responsiva e mobile-first.
-> * **Pedagogia:** 30 questões de alta dificuldade calibradas com explicações doutrinárias profundas para acertos e distratores.
-> * **Nuvem & Persistência:** PostgreSQL no Supabase com fallback offline, painel do catequista em tempo real e sincronização global de PIN.
-> * **Pronto para uso** na formação e nos encontros de catequese!
+## [v1.2.0] - 21/10/2026
+### Rotina Automatizada de Keep-Alive para o Supabase
+- **Workflow Agendado no GitHub Actions (`.github/workflows/supabase-keep-alive.yml`):** Automação com execução 2 vezes por semana (segundas e quintas às 09:00 BRT) via `curl` na API PostgREST, registrando atividade contínua no PostgreSQL e prevenindo a pausa automática do plano gratuito do Supabase.
 
 ---
 
-## 4. Ciclo de Refinamento Final Pré-Lançamento (Em Andamento)
-> Documento normativo: [`docs/plano_fases_usabilidade_estetica.md`](./plano_fases_usabilidade_estetica.md)  
-> Relatório da Fase 1: [`docs/relatorio_usabilidade_fase1.md`](./relatorio_usabilidade_fase1.md)
+## [v1.1.0] - 21/10/2026
+### Usabilidade Mobile e Formatação de Silogismos
+- **Formatação de Silogismos (`src/components/FormattedText.jsx`):** Renderização estilizada de premissas e conclusões lógicas através de selos (`• P1:`, `• P2:`, `• C:`) em enunciados, alternativas, feedbacks e revisão de erros.
+- **Otimização de Alvos de Toque no Mobile:** Áreas de clique aumentadas para 44–48 px e botão de avanço de questão reposicionado para alcance confortável no smartphone.
+- **Rolagem Automática:** Scroll automático até o card pedagógico de feedback após responder e retorno ao topo ao iniciar ou concluir um quiz.
+- **Prevenção de Zoom no iOS/Safari:** Aplicação de regra CSS (`font-size: 16px` em telas `< 640px`) em campos de entrada para impedir o zoom automático de tela.
+- **Impressão Isolada de Certificado:** Regras CSS `@media print` para exportação limpa do certificado iluminado sem elementos da interface.
+- **Editor do Catequista Multilinha:** Campos de texto adaptados para permitir inserção e edição de silogismos formatados diretamente pelo painel administrativo.
 
-1. **Fase 1: Melhorias de Usabilidade (UX/Mobile):** 🟡 **Implementada — aguardando validação manual e decisões do usuário**
-   - ✅ Silogismos e premissas formatados (selos P1/P2/C) em enunciados, alternativas, feedback e revisão (`FormattedText.jsx`).
-   - ✅ Editor do catequista com campos multilinha para criar novos silogismos.
-   - ✅ Fontes maiores no mobile, alvos de toque de 44–48 px e botão "Próxima Questão" fixo.
-   - ✅ Rolagem automática até o feedback e ao topo ao abrir quiz/resultado.
-   - ✅ Cabeçalho adaptado a telas de 320 px; logo navega para o início.
-   - ✅ Painel do catequista com cartões no celular e tabela corrigida.
-   - ✅ Impressão do certificado isolada (CSS `@media print`) e modal fechável por Esc/clique fora.
-   - ✅ Fim do zoom automático do iOS nos campos de texto; modais roláveis com teclado virtual.
-   - ✅ Estado de carregamento dos módulos; dicas do PIN padrão removidas da tela de login.
-   - 🔵 **Pendentes de decisão:** B5 (confirmar resposta), E3 (botão Voltar/progresso), E4 (histórico do aluno entre aparelhos), E5 (normalização de nomes).
-2. **Fase 2: Melhorias de Estética (UI Sacra Medieval):** ⏳ **Aguardando Conclusão da Fase 1**
-   - Polimento visual sacro, micro-interações litúrgicas, contrastes nobres e refinamento do certificado iluminado.
+---
+
+## [v1.0.0] - 21/10/2026
+### Marco de Conclusão da Entrega Central
+- **Marco do Projeto:** Sistema central completo, integrado e operacional para a catequese.
+- **Sincronização Híbrida (Supabase + LocalStorage):** Banco PostgreSQL em nuvem para acompanhamento das notas em tempo real pelo catequista, com funcionamento offline transparente via `localStorage`.
+- **Certificado Sacro Iluminado (`src/components/CertificateModal.jsx`):** Emissão de certificado em estética de manuscrito medieval para alunos que atingem 100% de aproveitamento.
+- **Regra de High Score Permanente:** Preservação estrita da maior nota histórica obtida pelo catequizando.
+
+---
+
+## [v0.6.0] - 21/10/2026
+### Sincronização em Nuvem do PIN do Administrador
+- **Tabela `fides_settings` no Supabase:** Armazenamento global do PIN mestre do catequista (`admin_pin`), com propagação instantânea entre aparelhos e navegadores anônimos ao ser alterado no painel.
+
+---
+
+## [v0.5.0] - 21/10/2026
+### Calibração de Alta Dificuldade e Balanceamento das Questões
+- **Distratores Eruditos:** Reformulação profunda de todas as alternativas incorretas das 30 questões, incorporando argumentos densos e erros históricos (nominalismo, racionalismo cartesiano estrito, fideísmo pietista e relativismo).
+- **Equalização de Extensão:** Tamanho de todas as alternativas padronizado entre 180 e 280 caracteres, eliminando pistas visuais por extensão de texto.
+- **Distribuição Equilibrada de Respostas:** Alternativas corretas redistribuídas de forma aleatória e uniforme entre as opções A, B, C e D.
+- **Sincronização de Cache por Versão:** Controle automático de cache no navegador via hash de versão (`v2.0.0-alta-dificuldade`).
+
+---
+
+## [v0.4.0] - 21/10/2026
+### Banco de Questões Oficiais do Encontro 1
+- **30 Questões Estruturadas (`src/data/defaultQuizzes.js`):** Elaboração das 30 questões do Módulo 1 divididas em 10 blocos doutrinários (Identidade & Missão, Propedêutica Lógica, Inferência Abdutiva, Ajuste Fino Cosmológico, Contingência de Leibniz, Argumento Moral Metaético, Confiabilidade Histórica e Profecias, Fatos Mínimos da Ressurreição, Trilema de Cristo e Síntese de Fé e Razão).
+- **Explicações Pedagógicas Detalhadas:** Redação de justificativas teológicas individualizadas para cada alternativa correta e cada um dos distratores.
+
+---
+
+## [v0.1.0 - v0.3.0] - 21/10/2026
+### Fundação, Identidade Visual Sacra e Arquitetura Base
+- **Stack Tecnológica:** Inicialização do projeto com Vite 5, React 18, Tailwind CSS v4, Lucide-React, Canvas-Confetti e cliente Supabase JS.
+- **Identidade Visual Sacra Medieval:** Paleta litúrgica (pergaminho, ouro sacramental, carmesim, lápis-lazúli) e tipografia clássica (Cinzel, Cinzel Decorative, Cormorant Garamond e Inter).
+- **Pinturas Clássicas Exclusivas:** Banner hero monástico com Santo Agostinho e Santo Tomás de Aquino (`public/images/fides_hero.jpg`) e selo iluminado pontifício (`public/images/fides_seal.jpg`).
+- **Componentes Estruturais Iniciais:** Construção de `Header`, `QuizList`, `QuizPlayer`, `QuizResult`, `AdminPanel`, `AdminLoginModal` e `UserModal`.
+- **Documento Executivo Inicial:** Criação de [`docs/documento_executivo.md`](./documento_executivo.md) com histórias de usuário e requisitos não-funcionais.
