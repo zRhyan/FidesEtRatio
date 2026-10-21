@@ -24,8 +24,10 @@ jobs:
             exit 1
           fi
 
-          # Remove barra final da URL se houver
+          # Normaliza a URL: remove /rest/v1 ou barras finais caso informadas
           BASE_URL="${SUPABASE_URL%/}"
+          BASE_URL="${BASE_URL%/rest/v1}"
+          BASE_URL="${BASE_URL%/}"
 
           echo "Disparando consulta keep-alive para ${BASE_URL}..."
 
