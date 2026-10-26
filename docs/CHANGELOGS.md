@@ -2,6 +2,11 @@
 
 Registro cronológico inverso de versões, modificações implementadas e marcos do projeto.
 
+## [v1.4.2] - 26/10/2026
+### Rotina Diária de Keep-Alive para o Supabase
+- **Agendamento Diário Fora de Pico:** Atualização do cron em `.github/workflows/supabase-keep-alive.yml` para execução diária às 06:27 BRT (09:27 UTC), evitando filas de sobrecarga da virada de hora (`:00`) e prevenindo com folga a pausa por inatividade do plano gratuito do Supabase.
+- **Log Detalhado de Resposta:** Registro do corpo de resposta do PostgREST no console da Action para auditoria imediata de conectividade.
+
 ---
 
 ## [v1.4.1] - 21/10/2026
