@@ -14,13 +14,13 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Executar consulta keep-alive no PostgreSQL do Supabase
+      - name: Executar escrita ativa (UPSERT) keep-alive no PostgreSQL do Supabase
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
           if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
-            echo "::error::Variáveis de ambiente ausentes. Configure SUPABASE_URL e SUPABASE_ANON_KEY nos Secrets do GitHub."
+            echo "::error::Variáveis de ambiente ausentes. Configure SUPABASE_URL e SUPABASE_ANON_KEY (ou SUPABASE_SERVICE_ROLE_KEY) nos Secrets do GitHub."
             exit 1
           fi
 
@@ -29,20 +29,39 @@ jobs:
           BASE_URL="${BASE_URL%/rest/v1}"
           BASE_URL="${BASE_URL%/}"
 
-          echo "Disparando consulta keep-alive para ${BASE_URL}..."
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          echo "Disparando UPSERT ativo keep-alive para ${BASE_URL} (Horário UTC: ${TIMESTAMP})..."
 
-          HTTP_STATUS=$(curl -s -w "%{http_code}" -o /tmp/supabase_response.json \
-            -X GET "${BASE_URL}/rest/v1/fides_settings?select=key&limit=1" \
+          # 1. Executa UPSERT na tabela fides_settings (garante escrita física e registro em WAL no PostgreSQL)
+          HTTP_STATUS=$(curl -s -w "%{http_code}" -o /tmp/supabase_upsert_resp.json \
+            -X POST "${BASE_URL}/rest/v1/fides_settings" \
             -H "apikey: ${SUPABASE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_KEY}" \
-            -H "User-Agent: GitHub-Actions-KeepAlive/1.0")
+            -H "Content-Type: application/json" \
+            -H "Prefer: resolution=merge-duplicates" \
+            -H "User-Agent: GitHub-Actions-KeepAlive/2.0" \
+            -d "{\"key\": \"keep_alive_heartbeat\", \"value\": \"active\", \"updated_at\": \"${TIMESTAMP}\"}")
 
-          echo "Código HTTP retornado: $HTTP_STATUS"
-          echo "Resposta do PostgREST: $(cat /tmp/supabase_response.json)"
+          echo "Status HTTP do UPSERT: $HTTP_STATUS"
+          echo "Resposta do PostgREST (UPSERT): $(cat /tmp/supabase_upsert_resp.json)"
 
-          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
-            echo "✅ Sucesso! O banco de dados Supabase respondeu com HTTP $HTTP_STATUS. Temporizador de inatividade reiniciado."
-          else
-            echo "::error::Falha ao comunicar com o Supabase. Código retornado: $HTTP_STATUS. Se o banco já estiver pausado, será necessário reativá-lo pelo painel (Resume)."
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "::error::Falha ao executar UPSERT no Supabase. Código retornado: $HTTP_STATUS. Se o banco estiver pausado, reative-o no painel (Resume)."
             exit 1
+          fi
+
+          # 2. Confirma a leitura do heartbeat recém-atualizado
+          READ_STATUS=$(curl -s -w "%{http_code}" -o /tmp/supabase_read_resp.json \
+            -X GET "${BASE_URL}/rest/v1/fides_settings?key=eq.keep_alive_heartbeat&select=key,updated_at" \
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}" \
+            -H "User-Agent: GitHub-Actions-KeepAlive/2.0")
+
+          echo "Status HTTP da Leitura: $READ_STATUS"
+          echo "Registro confirmado no banco: $(cat /tmp/supabase_read_resp.json)"
+
+          if [ "$READ_STATUS" -ge 200 ] && [ "$READ_STATUS" -lt 300 ]; then
+            echo "✅ Sucesso absoluto! Transação e leitura confirmadas no PostgreSQL do Supabase. Temporizador de inatividade reiniciado."
+          else
+            echo "::warning::UPSERT concluído, mas a verificação de leitura retornou status $READ_STATUS."
           fi

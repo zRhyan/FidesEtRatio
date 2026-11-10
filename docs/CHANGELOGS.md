@@ -2,6 +2,13 @@
 
 Registro cronológico inverso de versões, modificações implementadas e marcos do projeto.
 
+## [v1.4.3] - 10/11/2026
+### UPSERT Ativo no Keep-Alive do Supabase (Prevenção de Pausa do Banco)
+- **Transação Ativa no PostgreSQL (UPSERT):** Substituição de consultas passivas `GET` por operações ativas de gravação (`POST` com `Prefer: resolution=merge-duplicates`) na tabela `fides_settings`, forçando commits reais de transação (`xact_commit`) e gravação em WAL todos os dias para reiniciar efetivamente a contagem de 7 dias de inatividade do Supabase.
+- **Auditoria Dupla e Compatibilidade com Service Role:** Leitura imediata de validação pós-escrita e suporte transparente ao `SUPABASE_SERVICE_ROLE_KEY` (com fallback para `SUPABASE_ANON_KEY`).
+
+---
+
 ## [v1.4.2] - 26/10/2026
 ### Rotina Diária de Keep-Alive para o Supabase
 - **Agendamento Diário Fora de Pico:** Atualização do cron em `.github/workflows/supabase-keep-alive.yml` para execução diária às 06:27 BRT (09:27 UTC), evitando filas de sobrecarga da virada de hora (`:00`) e prevenindo com folga a pausa por inatividade do plano gratuito do Supabase.
